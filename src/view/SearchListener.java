@@ -10,7 +10,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 
-public class RentListener implements EventHandler<ActionEvent> {
+public class SearchListener implements EventHandler<ActionEvent> {
     
     @Override 
     public void handle(ActionEvent e) {

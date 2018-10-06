@@ -145,13 +145,13 @@ public class MainWindow extends Application{
       MenuItem newMenuItem = new MenuItem("Add Property");
       newMenuItem.setOnAction(new AddPropertyListener());
       MenuItem rentMenuItem = new MenuItem("Rent Property");
-      rentMenuItem.setOnAction(new RentListener());
+      rentMenuItem.setOnAction(new SearchListener());
       MenuItem returnMenuItem = new MenuItem("Return Property");
-      //returnMenuItem.setOnAction(new RetunListener(returnMenuItem));
+      returnMenuItem.setOnAction(new SearchListener());
       MenuItem startMenuItem = new MenuItem("Property Maintenance");
-      //startMenuItem.setOnAction(new MaintainListener(startMenuItem));
+      startMenuItem.setOnAction(new SearchListener());
       MenuItem endMenuItem = new MenuItem("Complete Maintenance");
-      //endMenuItem.setOnAction(new CompleteListener(endMenuItem));
+      endMenuItem.setOnAction(new SearchListener());
       MenuItem allMenuItem = new MenuItem("Display All Properties");
       //allMenuItem.setOnAction(new DisplayListener(allMenuItem));
       
