@@ -14,12 +14,27 @@ public abstract class Property {
     private double rentalRate;
     private DateTime startMaintenance;
     private int status = 2; // 1: rented, 2: available/returned, 3: under maintenance 
-    
+    private String image;
+    private String description;
     
     RentalRecord[] records = new RentalRecord[10];
     DecimalFormat df2 = new DecimalFormat("#.00");
     
-    public Property(String propertyID, int streetNo, String streetName, String suburb, int bedNum, DateTime lastMaintainDate) {
+    public Property(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, DateTime lastMaintainDate, 
+            int status, String image, String description) {
+        this.propertyID = propertyID;
+        this.streetNo = streetNo;
+        this.streetName = streetName;
+        this.suburb = suburb;
+        this.bedNum = bedNum;
+        this.lastMaintainDate = lastMaintainDate;
+        
+       
+    }
+    
+    public Property(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, DateTime lastMaintainDate ) {
         this.propertyID = propertyID;
         this.streetNo = streetNo;
         this.streetName = streetName;
@@ -39,6 +54,7 @@ public abstract class Property {
     public int getStatus() {return status;}
     public DateTime getStartMaintainDate() {return startMaintenance;}
     public DateTime getLastMaintainDate() {return lastMaintainDate;}
+    public String getImage() {return image;}
    
     public void setToRent(boolean check) {
         if(check == true) status = 1;        

@@ -61,6 +61,15 @@ public class DateTime
         return sdf.format(gct);
     }
     
+//    public String getSQLFormattedDate()
+//    {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        long currentTime = getTime();
+//        Date gct = new Date(currentTime);
+//        
+//        return sdf.format(gct);
+//    }
+    
     public String getEightDigitDate()
     {
         SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");

@@ -7,9 +7,19 @@ public class Apartment extends Property {
 
     
     
-    public Apartment(String propertyID, int streetNo, String streetName, String suburb, int bedNum, DateTime lastMaintainDate) {
+    public Apartment(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, DateTime lastMaintainDate) {
         super(propertyID, streetNo, streetName, suburb, bedNum, lastMaintainDate);
         
+    }
+    
+    public Apartment(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, DateTime lastMaintainDate, 
+            int status, String image, String description) {
+        super(propertyID, streetNo, streetName, suburb, bedNum, lastMaintainDate, 
+                status, image, description);
+        
+       
     }
     
     public boolean checkDate(DateTime date, int numOfDay) {

@@ -1,5 +1,7 @@
 package view;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -8,6 +10,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.*;
 //import ui_controls.MenuItemListener;
 //import ui_controls.ComboBoxListener1;
@@ -18,17 +22,115 @@ import javafx.geometry.Pos;
 public class MainWindow extends Application{
 
     
+    private GridPane listView;
+    private VBox property;
+    private Image img;
+    private ImageView imgV;
+    private Text propertyID;
+    private Text address;
+    private Text desc;
+    final private Button moreButton = new Button("More details...");
+    
+    private ArrayList<VBox> list = new ArrayList<VBox>();
+    final private String path = "/view/";
+    final private String pathN = "/view/No_Image_Available.png";
+    
+    
+    public ImageView getImageView() {return imgV;}
+    public Text getPropertyID() {return propertyID;}
+    public Text getAddress() {return address;}
+    public Text getDesc() {return desc;}
+    public VBox getVBox() {return property;}
+    public ArrayList<VBox> getArrayList(){return list;}
+    
+    public void setImageView(String fileName) {
+        String p = "";
+        p = path + fileName;
+        
+        
+        try {
+            img = new Image(p);
+            imgV = new ImageView();
+            imgV.setImage(img);
+            imgV.setFitWidth(240);
+            imgV.setFitHeight(160);
+            //return imgV;
+        }
+        catch (IllegalArgumentException i){
+           
+            //TODO CHANGE WARNING TO DIALOG BOX
+            System.out.println("image path invalid");
+            
+            try {
+                Image noImg = new Image(pathN);
+                ImageView noImgV = new ImageView();
+                noImgV.setImage(noImg);
+                //return noImgV;
+            }
+            catch (IllegalArgumentException e) {
+                System.out.println("image path invalid");
+                //return null;
+            }          
+        }                
+    }    
+    
+    public void setPropertyID(String ID) {
+        propertyID = new Text(ID); 
+        propertyID.setFont(Font.font("Verdana",FontWeight.BOLD, 20));
+    }
+    public void setAddress(int streetNum, String streetName, String suburb) {
+        address = new Text(streetNum + " " + streetName + ", " + suburb);
+        address.setFont(Font.font("Verdana",FontWeight.BOLD, 14));
+    }
+    public void setDesc(String d) {
+        desc = new Text(d);
+    }
+    
+    public void setVBox(ImageView imgV, Text ID, Text address, Text desc){
+        property = new VBox(10);
+        
+        property.getChildren().addAll(imgV, ID, address, desc, moreButton);
+        list.add(property);
+    }
+    
+    
+    
+    public void inputList() {
+        int i = 0; 
+        int num = 1;
+        int j = 0;
+        for(VBox v : list) {
+            
+            if (num%3 == 1) {
+                listView.add(v, 0, i);
+                i++;
+                num++;
+            }
+            else if (num%3 ==2){
+                listView.add(v, 1, i);
+                i++;
+                num++;
+            } 
+            else {
+                listView.add(v, 2, i);
+                i = 0;
+                num++;
+            }
+        }
+    }
+    
     @Override // Override the start method in the Application class
     public void start(Stage primaryStage) {
         // Create a pane and set its properties
         BorderPane root = new BorderPane();
         
         
-        // Create filter bar
+        // Create main view
         VBox mainView = new VBox(10);
         mainView.setPadding(new Insets(10, 10, 10, 10));
-        //filterBar.prefHeight(30);
+      
         
+        // Create filter bar
         HBox filterBar = new HBox(10);
         mainView.setPadding(new Insets(10, 10, 10, 10));
         
@@ -44,14 +146,12 @@ public class MainWindow extends Application{
         
         ComboBox<String> roomBox = new ComboBox<>();
         roomBox.getItems().addAll("All Bedrooms Types","3 Bedrooms","2 Bedrooms", "1 Bedroom");
-        roomBox.setValue("All Bedrooms Types");
-        //cbo.setOnAction(new ComboBoxListener1(cbo));
+        roomBox.setValue("All Bedrooms Types");        
         
         ComboBox<String> availBox = new ComboBox<>();
         availBox.getItems().addAll("All Conditions","Available","Rent", "Under Maintenance");
         availBox.setValue("All Conditions");
-       
-        
+
         //TODO: generate suburb list from database
         ComboBox<String> suburbBox = new ComboBox<>();
         suburbBox.getItems().addAll("All Suburbs", "Melbourne","Fitzory", "Kensington","Carlton");
@@ -62,62 +162,29 @@ public class MainWindow extends Application{
         
         filterBar.getChildren().addAll(filterLabel, typeBox, roomBox, availBox, suburbBox, searchBtn);
        
-       
+              
+        //Scroll bar for the main view, 
+        ScrollPane scrollInfo = new ScrollPane();               
+        scrollInfo.setContent(mainView);       
+        scrollInfo.setVbarPolicy(ScrollBarPolicy.ALWAYS); //Always show vertical scroll bar
+        scrollInfo.setHbarPolicy(ScrollBarPolicy.AS_NEEDED); // Horizontal scroll bar is only displayed when needed
         
-        //Scroll Pane for display property information
-        ScrollPane scrollInfo = new ScrollPane();
-        //scrollInfo.fitToWidthProperty().set(true);
-        //scrollInfo.fitToHeightProperty().set(true);
-        
-        //GridPane propertyInfo = new GridPane();
-        Image image = new Image("/view/images/A01.jpeg");
-        ImageView iv1 = new ImageView();
-        iv1.setImage(image);
-        
-        iv1.setFitWidth(240);
-        iv1.setFitHeight(100);
-        
-        //iv2.setPreserveRatio(true);
-        //iv1.setSmooth(true);
-        //iv1.setCache(true);
-        
-        Button button2 = new Button("My Button");
-        button2.setPrefSize(240, 200);
-        
-        Button button3 = new Button("My Button");
-        button3.setPrefSize(240, 200);
-        
-        scrollInfo.setContent(mainView);
-        //scrollInfo.setContent(propertyInfo);
-        
-        
-        // Always show vertical scroll bar
-        scrollInfo.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        
-        // Horizontal scroll bar is only displayed when needed
-        scrollInfo.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        
-        GridPane listView = new GridPane();
+        //Grid pane for display property list
+        listView = new GridPane();
         listView.setGridLinesVisible(true);
         
         listView.setPadding(new Insets(20));
         listView.setHgap(10);
         listView.setVgap(10);
-        ColumnConstraints column = new ColumnConstraints(240);
-        //ColumnConstraints column2 = new ColumnConstraints(240);
-        //ColumnConstraints column3 = new ColumnConstraints(240);
+        ColumnConstraints column = new ColumnConstraints(240);        
         listView.getColumnConstraints().addAll(column, column, column);
+        //inputList();
         
-        
-        listView.add(iv1, 0, 0);
-        
-        listView.add(button2, 0, 1);
-        listView.add(button3, 0, 2);
-        
+                       
         mainView.getChildren().addAll(filterBar, listView);
         
         
-    
+        //Create menu bar
         MenuBar menuBar = new MenuBar();
         creatMenu(menuBar);
         
@@ -190,9 +257,9 @@ public class MainWindow extends Application{
     * The main method is only needed for the IDE with limited JavaFX support. Not
     * needed for running from the command line.
     */
-    public static void main(String[] args) {
-        launch(args);
-    }
+   // public static void main(String[] args) {
+   //     launch(args);
+   // }
     
     
 }

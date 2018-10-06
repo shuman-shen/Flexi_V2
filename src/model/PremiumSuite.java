@@ -4,9 +4,19 @@ import utilities.DateTime;
 
 public class PremiumSuite extends Property{
     
-    public PremiumSuite(String propertyID, int streetNo, String streetName, String suburb, int bedNum, DateTime lastMaintainDate) {
+    public PremiumSuite(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, DateTime lastMaintainDate) {
             super(propertyID, streetNo, streetName, suburb, bedNum, lastMaintainDate);
       
+    }
+    
+    public PremiumSuite(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, DateTime lastMaintainDate, 
+            int status, String image, String description) {
+        super(propertyID, streetNo, streetName, suburb, bedNum, lastMaintainDate, 
+                status, image, description);
+        
+       
     }
     
     /* If a Premium Suite is in a status of Available,
