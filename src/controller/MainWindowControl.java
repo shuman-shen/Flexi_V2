@@ -20,14 +20,24 @@ public class MainWindowControl {
     public MainWindowControl(FlexiRentSystem f) {
         flexiModel = f;
    
-    }
-    
+    }   
   
     
     public FlexiRentSystem getFlexiRentSystem() {
         return flexiModel;
     }
     
+    public boolean setFilter(String type, String bedNum, String condition, String suburb) {
+        if(type.startsWith("All") && bedNum.startsWith("All") 
+                && condition.startsWith("All") && suburb.startsWith("All"))
+        {
+            return false;
+        }
+        else {
+            
+            return true;
+        }
+    }
     
         
 

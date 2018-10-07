@@ -62,11 +62,14 @@ public class MainWindow{
         mainControl = m;
         flexiModel = f;
         createView();
+        setMainList();
     }
     
     public void setImageView(String fileName) {
         String p = "";
         p = folder + fileName;
+        //String t = "/src/view/images/A02.jpeg";
+        System.out.print("image path" + p);
         
         
         try {
@@ -83,8 +86,11 @@ public class MainWindow{
             System.out.println("image path invalid");
             
             try {                
-                Image noImg = new Image("/view/images/No_Image_Available.png");
+                Image noImg = new Image(pathN);
+                imgV = new ImageView();
                 imgV.setImage(noImg);
+                imgV.setFitWidth(240);
+                imgV.setFitHeight(160);
               
                 //return noImgV;
             }
@@ -92,7 +98,6 @@ public class MainWindow{
                 System.out.println("image path invalid");
                 //return null;
             }
-            catch(Exception x) {System.err.println("Others.");}
         }                
     }    
     
@@ -113,7 +118,6 @@ public class MainWindow{
         property = new VBox(10);
         
         property.getChildren().addAll(imgV, ID, address, desc, moreButton);
-        //list.add(property);
     }
     
     public void setMainList() {
@@ -125,7 +129,7 @@ public class MainWindow{
         
         ArrayList<Property> list = flexiModel.getPropertyList();
         
-        String d = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        String d = "";
         
         for(Property p : list) {
             String propertyID = p.getPropertyID();
@@ -142,9 +146,11 @@ public class MainWindow{
             //setVBox(getImageView(), getPropertyID(), getAddress(), getDesc());                       
             property = new VBox(10);
             
-            property.getChildren().addAll(pID, address, desc);
-           
+            property.getChildren().addAll(imgV, pID, address, desc);
+            
+            RowConstraints row = new RowConstraints(300);
             if (num%3 == 1) {
+                listView.getRowConstraints().add(row);
                 listView.add(property, 0, i);
                 System.out.println("Coordinates:  0, " + i);
                 System.out.println("Number:  " + num);
@@ -206,10 +212,20 @@ public class MainWindow{
         suburbBox.getItems().addAll("All Suburbs", "Melbourne","Fitzory", "Kensington","Carlton");
         suburbBox.setValue("All Suburbs");
         
-        Button searchBtn = new Button("Search");
-        searchBtn.setPrefSize(70, 30);
+        Button filterBtn = new Button("Filter");
+        filterBtn.setOnAction(event ->
+        {
+            typeBox.getValue();
+            roomBox.getValue();
+            availBox.getValue();
+            suburbBox.getValue();
+            
+            //mainControl.
+            
+        });
+        filterBtn.setPrefSize(70, 30);
         
-        filterBar.getChildren().addAll(filterLabel, typeBox, roomBox, availBox, suburbBox, searchBtn);
+        filterBar.getChildren().addAll(filterLabel, typeBox, roomBox, availBox, suburbBox, filterBtn);
        
               
         //Scroll bar for the main view, 
@@ -227,7 +243,7 @@ public class MainWindow{
         listView.setVgap(10);
         ColumnConstraints column = new ColumnConstraints(240);        
         listView.getColumnConstraints().addAll(column, column, column);
-        setMainList();     
+             
                        
         mainView.getChildren().addAll(filterBar, listView);
         

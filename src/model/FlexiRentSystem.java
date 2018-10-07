@@ -36,6 +36,8 @@ public class FlexiRentSystem {
         return properties;
     }
     
+    public void getFilterList() {}
+    
     public void getMainList() {
     
         Connection conn = null;

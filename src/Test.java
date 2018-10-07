@@ -18,7 +18,7 @@ public class Test extends Application {
 
      // Create a scene and place the pane in the stage
         Scene scene = new Scene(view.asParent());
-        primaryStage.setWidth(820);
+        primaryStage.setWidth(840);
         primaryStage.setHeight(500);
         primaryStage.setTitle("Flexi Rent System"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
