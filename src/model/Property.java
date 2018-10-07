@@ -29,6 +29,9 @@ public abstract class Property {
         this.suburb = suburb;
         this.bedNum = bedNum;
         this.lastMaintainDate = lastMaintainDate;
+        this.status = status;
+        this.image = image;
+        this.description = description;
         
        
     }
@@ -54,7 +57,8 @@ public abstract class Property {
     public int getStatus() {return status;}
     public DateTime getStartMaintainDate() {return startMaintenance;}
     public DateTime getLastMaintainDate() {return lastMaintainDate;}
-    public String getImage() {return image;}
+    public String getImage() {return this.image;}
+    public String getDescriiption() {return description;}
    
     public void setToRent(boolean check) {
         if(check == true) status = 1;        

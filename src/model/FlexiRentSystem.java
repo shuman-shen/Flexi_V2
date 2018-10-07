@@ -59,15 +59,26 @@ public class FlexiRentSystem {
            // loop through the result set
            while (rs.next()) {             
                propertyID = rs.getString("propertyID");
-               streetNo = rs.getInt("streetNo");               
+               //System.out.print(propertyID + ":");
+               streetNo = rs.getInt("streetNo");
+               //System.out.print(streetNo + ":");
                streetName = rs.getString("streetName");
+               //System.out.print(streetName + ":");
                suburb = rs.getString("suburb");
+               //System.out.print(suburb + ":");
                bedNum = rs.getInt("bedNum");
+               //System.out.print(bedNum + ":");
                dateL = rs.getString("lastMaintainDate");
+               //System.out.print(dateL + ":");
                dateS = rs.getString("startMaintenance");
-               image = rs.getString("image");               
+               //System.out.print(dateS + ":");
+               image = rs.getString("image");  
+               //System.out.print(image + ":");
                description = rs.getString("description"); 
+               //System.out.print(description + ":");
                status = rs.getInt("status");
+               //System.out.print(status + "\n");
+               
                
                //Parse date format
                lastMaintainDate = checkDayFormat(dateL);                             
@@ -95,10 +106,6 @@ public class FlexiRentSystem {
            }
           //TODO TYPE NOT MATCH EXCEPTION  
            
-           
-           for(Property p : properties) {
-               System.out.println(p.getPropertyID());
-           }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {

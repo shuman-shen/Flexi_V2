@@ -2,6 +2,7 @@ package view;
 
 import java.util.ArrayList;
 
+import controller.MainWindowControl;
 import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -13,39 +14,59 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import model.FlexiRentSystem;
+import model.Property;
 //import ui_controls.MenuItemListener;
 //import ui_controls.ComboBoxListener1;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
-public class MainWindow extends Application{
+public class MainWindow{
 
     
+    
+    
+    private MainWindowControl mainControl;
+    private FlexiRentSystem flexiModel;    
+    private BorderPane root;
     private GridPane listView;
     private VBox property;
     private Image img;
     private ImageView imgV;
-    private Text propertyID;
+    private Text pID;
     private Text address;
-    private Text desc;
+    private Label desc;
     final private Button moreButton = new Button("More details...");
     
     private ArrayList<VBox> list = new ArrayList<VBox>();
-    final private String path = "/view/";
-    final private String pathN = "/view/No_Image_Available.png";
+    
+    final private String pathN = "/view/images/No_Image_Available.png";
+    final private String folder = "/view/images/";
+    
+    
     
     
     public ImageView getImageView() {return imgV;}
-    public Text getPropertyID() {return propertyID;}
+    public Text getPropertyID() {return pID;}
     public Text getAddress() {return address;}
-    public Text getDesc() {return desc;}
+    public Label getDesc() {return desc;}
     public VBox getVBox() {return property;}
     public ArrayList<VBox> getArrayList(){return list;}
     
+    public Parent asParent() {
+        return root;
+    }
+    
+    public MainWindow(MainWindowControl m, FlexiRentSystem f) {
+        mainControl = m;
+        flexiModel = f;
+        createView();
+    }
+    
     public void setImageView(String fileName) {
         String p = "";
-        p = path + fileName;
+        p = folder + fileName;
         
         
         try {
@@ -61,68 +82,96 @@ public class MainWindow extends Application{
             //TODO CHANGE WARNING TO DIALOG BOX
             System.out.println("image path invalid");
             
-            try {
-                Image noImg = new Image(pathN);
-                ImageView noImgV = new ImageView();
-                noImgV.setImage(noImg);
+            try {                
+                Image noImg = new Image("/view/images/No_Image_Available.png");
+                imgV.setImage(noImg);
+              
                 //return noImgV;
             }
             catch (IllegalArgumentException e) {
                 System.out.println("image path invalid");
                 //return null;
-            }          
+            }
+            catch(Exception x) {System.err.println("Others.");}
         }                
     }    
     
     public void setPropertyID(String ID) {
-        propertyID = new Text(ID); 
-        propertyID.setFont(Font.font("Verdana",FontWeight.BOLD, 20));
+        pID = new Text(ID); 
+        pID.setFont(Font.font("Calibri",FontWeight.BOLD, 16));
     }
     public void setAddress(int streetNum, String streetName, String suburb) {
         address = new Text(streetNum + " " + streetName + ", " + suburb);
-        address.setFont(Font.font("Verdana",FontWeight.BOLD, 14));
+        address.setFont(Font.font("Calibri",FontWeight.BOLD, 12));
     }
     public void setDesc(String d) {
-        desc = new Text(d);
+        desc = new Label(d);
+        desc.setWrapText(true);
     }
     
     public void setVBox(ImageView imgV, Text ID, Text address, Text desc){
         property = new VBox(10);
         
         property.getChildren().addAll(imgV, ID, address, desc, moreButton);
-        list.add(property);
+        //list.add(property);
     }
     
-    
-    
-    public void inputList() {
+    public void setMainList() {
+        
         int i = 0; 
         int num = 1;
-        int j = 0;
-        for(VBox v : list) {
+        
+        flexiModel.getMainList();
+        
+        ArrayList<Property> list = flexiModel.getPropertyList();
+        
+        String d = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        
+        for(Property p : list) {
+            String propertyID = p.getPropertyID();
+            int streetNum = p.getStreetNo();
+            String streetName = p.getStreetName();
+            String suburb = p.getSuburb();
+            String fName = p.getImage();
+            //System.out.println("Image" + fName);
+            setImageView(fName);
+            setPropertyID(propertyID);
+            setAddress(streetNum, streetName, suburb);
+            setDesc(d);
             
+            //setVBox(getImageView(), getPropertyID(), getAddress(), getDesc());                       
+            property = new VBox(10);
+            
+            property.getChildren().addAll(pID, address, desc);
+           
             if (num%3 == 1) {
-                listView.add(v, 0, i);
-                i++;
+                listView.add(property, 0, i);
+                System.out.println("Coordinates:  0, " + i);
+                System.out.println("Number:  " + num);
                 num++;
             }
             else if (num%3 ==2){
-                listView.add(v, 1, i);
-                i++;
+                listView.add(property, 1, i);
+                System.out.println("Coordinates:  1, " + i);
+                System.out.println("Number:  " + num);
                 num++;
             } 
             else {
-                listView.add(v, 2, i);
-                i = 0;
+                listView.add(property, 2, i);
+                System.out.println("Coordinates:  2, " + i);
+                System.out.println("Number:  " + num);
+                i ++;
                 num++;
             }
+            
         }
     }
     
-    @Override // Override the start method in the Application class
-    public void start(Stage primaryStage) {
+    
+    //@Override // Override the start method in the Application class
+    public void createView() {
         // Create a pane and set its properties
-        BorderPane root = new BorderPane();
+        root = new BorderPane();
         
         
         // Create main view
@@ -178,8 +227,7 @@ public class MainWindow extends Application{
         listView.setVgap(10);
         ColumnConstraints column = new ColumnConstraints(240);        
         listView.getColumnConstraints().addAll(column, column, column);
-        //inputList();
-        
+        setMainList();     
                        
         mainView.getChildren().addAll(filterBar, listView);
         
@@ -192,13 +240,7 @@ public class MainWindow extends Application{
         //root.setBottom(filterBar);
         root.setCenter(scrollInfo);
         
-        // Create a scene and place the pane in the stage
-        Scene scene = new Scene(root);
-        primaryStage.setWidth(820);
-        primaryStage.setHeight(500);
-        primaryStage.setTitle("Flexi Rent System"); // Set the stage title
-        primaryStage.setScene(scene); // Place the scene in the stage
-        primaryStage.show(); // Display the stage
+        
     }
     
     public void creatMenu(MenuBar menuBar) {
