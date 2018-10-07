@@ -1,6 +1,7 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import controller.MainWindowControl;
 import javafx.application.Application;
@@ -29,6 +30,7 @@ public class MainWindow{
     
     private MainWindowControl mainControl;
     private FlexiRentSystem flexiModel;    
+    private VBox mainView;
     private BorderPane root;
     private GridPane listView;
     private VBox property;
@@ -127,11 +129,22 @@ public class MainWindow{
         
         flexiModel.getMainList();
         
-        ArrayList<Property> list = flexiModel.getPropertyList();
+        HashMap<String, Property> list = flexiModel.getPropertyList();
+        
+      //Grid pane for display property list
+        listView = new GridPane();
+        listView.setGridLinesVisible(true);
+        
+        listView.setPadding(new Insets(20));
+        listView.setHgap(10);
+        listView.setVgap(10);
+        ColumnConstraints column = new ColumnConstraints(240);        
+        listView.getColumnConstraints().addAll(column, column, column);
         
         String d = "";
         
-        for(Property p : list) {
+        list.forEach(String s , Property p) ->
+         {
             String propertyID = p.getPropertyID();
             int streetNum = p.getStreetNo();
             String streetName = p.getStreetName();
@@ -171,6 +184,9 @@ public class MainWindow{
             }
             
         }
+        mainView.getChildren().add(listView);
+        
+        
     }
     
     
@@ -181,7 +197,7 @@ public class MainWindow{
         
         
         // Create main view
-        VBox mainView = new VBox(10);
+        mainView = new VBox(10);
         mainView.setPadding(new Insets(10, 10, 10, 10));
       
         
@@ -215,12 +231,22 @@ public class MainWindow{
         Button filterBtn = new Button("Filter");
         filterBtn.setOnAction(event ->
         {
-            typeBox.getValue();
-            roomBox.getValue();
-            availBox.getValue();
-            suburbBox.getValue();
             
-            //mainControl.
+            
+            boolean toFilter = mainControl.setFilter(typeBox.getValue(), roomBox.getValue(), availBox.getValue(), suburbBox.getValue());
+            //listView.getChildren().removeAll();
+            if (toFilter == false) {
+                listView.getChildren().removeAll();
+                setMainList();
+            }
+            else {
+                
+//                Iterator<String> crunchifyIterator = crunchifyList.iterator();
+//                while (crunchifyIterator.hasNext()) {
+//                    System.out.println(crunchifyIterator.next());
+//                }
+                System.out.println("Filter set");
+            }
             
         });
         filterBtn.setPrefSize(70, 30);
@@ -234,18 +260,10 @@ public class MainWindow{
         scrollInfo.setVbarPolicy(ScrollBarPolicy.ALWAYS); //Always show vertical scroll bar
         scrollInfo.setHbarPolicy(ScrollBarPolicy.AS_NEEDED); // Horizontal scroll bar is only displayed when needed
         
-        //Grid pane for display property list
-        listView = new GridPane();
-        listView.setGridLinesVisible(true);
         
-        listView.setPadding(new Insets(20));
-        listView.setHgap(10);
-        listView.setVgap(10);
-        ColumnConstraints column = new ColumnConstraints(240);        
-        listView.getColumnConstraints().addAll(column, column, column);
              
                        
-        mainView.getChildren().addAll(filterBar, listView);
+        mainView.getChildren().add(filterBar);
         
         
         //Create menu bar

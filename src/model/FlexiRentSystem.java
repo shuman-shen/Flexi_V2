@@ -12,8 +12,9 @@ import java.sql.Statement;
 public class FlexiRentSystem {
 
     
-    private ArrayList<Property> properties = new ArrayList<Property>();
-    
+    //private ArrayList<Property> properties = new ArrayList<Property>();
+    private HashMap<String, Property> properties;
+    private ArrayList<String> filteredID;    
     private Property property;
     
     private String propertyType;
@@ -31,15 +32,112 @@ public class FlexiRentSystem {
     //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     //LocalDate dateTime = LocalDate.parse(str, formatter);
     
+    public FlexiRentSystem() {
+        getMainList();
+        //filteredList = new ArrayList<Property>(properties);
+    }
     
-    public ArrayList<Property> getPropertyList() {
+    
+    public HashMap<String, Property> getPropertyList() {
         return properties;
     }
     
-    public void getFilterList() {}
+    public ArrayList<String> getFilteredID(){
+        return filteredID;
+    }
+    
+    public void getFilterList(String propertyType, int bedNum, int status, String suburb) {
+        
+        Connection conn = null;
+        String pType = "";
+        String bNum = "";
+        String cType = "";
+        String s = "";
+        ArrayList<String> type = new ArrayList<String>();
+        String all = "";
+        
+        if (propertyType.equals("Apartment")) {
+            pType = "propertyID like \'A%\'";
+            type.add(pType);
+        }
+        else if (propertyType.startsWith("Prem")) {
+            pType = "propertyID like \"S%\"";
+            type.add(pType);
+        }
+
+        if(bedNum != 0) {
+            bNum = "bedNum = "+bedNum;
+            type.add(bNum);
+        }
+        
+        if(status != 0) {
+            cType = "status = " + status;
+            type.add(cType);
+        }
+        if(suburb.equals("General")== false) {
+            s = "suburb = \'" + suburb +"\'";
+            type.add(s);
+        }
+        
+        
+        
+        if (type.size() == 1 ) {
+            all = type.get(0);
+            System.out.println(all);
+        }
+        else {
+            for(int i =0; i<(type.size()-1); i++) {
+                all = all + " " + type.get(i) + " AND ";
+            }
+            all = all +type.get(type.size()-1);
+            System.out.println(all);
+        }
+        
+        filteredID = new ArrayList<String>();
+        
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql = "SELECT propertyID FROM Property WHERE " + all;
+            Statement stmt  = conn.createStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+           
+           // loop through the result set
+           while (rs.next()) {             
+               propertyID = rs.getString("propertyID");
+               //System.out.print(propertyID + ":");
+               filteredID.add(propertyID);
+               
+           }
+          //TODO TYPE NOT MATCH EXCEPTION  
+          for(String k : filteredID) {
+              System.out.println(k);
+          }
+           
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        } 
+        
+        
+        
+        
+    }
     
     public void getMainList() {
-    
+        properties = new HashMap<String, Property>();
         Connection conn = null;
         String dateL = "";
         String dateS = "";
@@ -103,7 +201,7 @@ public class FlexiRentSystem {
                    property.setStartMaintain(startMaintenance);
                    }
                }
-               properties.add(property); 
+               properties.put(propertyID,property); 
            
            }
           //TODO TYPE NOT MATCH EXCEPTION  
