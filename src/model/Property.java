@@ -58,8 +58,8 @@ public abstract class Property {
     public DateTime getStartMaintainDate() {return startMaintenance;}
     public DateTime getLastMaintainDate() {return lastMaintainDate;}
     public String getImage() {return this.image;}
-    public String getDescriiption() {return description;}
-   
+    public String getDescription() {return description;}
+    
     public void setToRent(boolean check) {
         if(check == true) status = 1;        
     }

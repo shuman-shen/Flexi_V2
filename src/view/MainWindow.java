@@ -109,7 +109,7 @@ public class MainWindow{
     
     public void setPropertyID(String ID) {
         pID = new Button(ID); 
-        pID.setOnAction(new DisplayDetailListener(pID.getText(), root, mainControl));
+        pID.setOnAction(new DisplayDetailListener(pID.getText(), mainControl));
         pID.setFont(Font.font("Calibri",FontWeight.BOLD, 16));
     }
     public void setAddress(int streetNum, String streetName, String suburb) {

@@ -35,6 +35,7 @@ public class MainWindowControl {
         return flexiModel.getSuburbList();
     }
     
+   
 //   public Collection<Property> getCollection(){
 //       return flexiModel.getCollection();
 //   }

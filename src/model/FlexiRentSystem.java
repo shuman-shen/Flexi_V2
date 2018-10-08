@@ -65,6 +65,7 @@ public class FlexiRentSystem {
         return suburbList;
     }
     
+    //Generate suburb list for displayed at MainWindow filter
     public void getAllSuburbs() {
         suburbList = new ArrayList<String>();
         String s;
@@ -102,6 +103,7 @@ public class FlexiRentSystem {
         } 
     }
     
+    //Search main property list stored with a list of property IDs
     public void searchListWithID() {
         //boolean found = false;
         //Iterator<Property>  iter = filteredList.iterator();
@@ -120,6 +122,7 @@ public class FlexiRentSystem {
         }
     }
     
+    // Filter out the property matches specific propertyID
     public boolean setFilterList(String propertyID) {
         
         Connection conn = null;
@@ -145,6 +148,7 @@ public class FlexiRentSystem {
           //TODO TYPE NOT MATCH EXCEPTION  
           if(pID != null) {          
           searchListWithID();
+          // TODO EXCEPTION REQUIRED TO SUBSTITUDE BOOLEAN RETURN VALUE
           return true;}
           else return false;
            
@@ -162,6 +166,7 @@ public class FlexiRentSystem {
         } 
     }
     
+    // Filter out property list according to MainWindow filter conditions
     public void setFilterList(String propertyType, int bedNum, int status, String suburb) {
         
         Connection conn = null;
@@ -251,6 +256,7 @@ public class FlexiRentSystem {
         }             
     }
     
+    // Connect and generate whole list of properties from database
     public void getMainList() {
         properties = new ArrayList<Property>();
         Connection conn = null;
