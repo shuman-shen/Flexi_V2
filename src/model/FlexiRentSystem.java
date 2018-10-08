@@ -13,9 +13,12 @@ public class FlexiRentSystem {
 
     
     //private ArrayList<Property> properties = new ArrayList<Property>();
-    private HashMap<String, Property> properties;
+    private ArrayList<Property> properties;
     private ArrayList<String> filteredID;    
+    private ArrayList<Property> filteredList;
     private Property property;
+    //private Collection<Property> c;
+    
     
     private String propertyType;
     private String propertyID;
@@ -29,16 +32,18 @@ public class FlexiRentSystem {
     private String image;
     private String description;
     private final String checkDate = "(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/((19|20)\\d\\d)";
+    private ArrayList<String> suburbList;
     //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     //LocalDate dateTime = LocalDate.parse(str, formatter);
     
     public FlexiRentSystem() {
         getMainList();
+        getAllSuburbs();
         //filteredList = new ArrayList<Property>(properties);
     }
     
     
-    public HashMap<String, Property> getPropertyList() {
+    public ArrayList<Property> getPropertyList() {
         return properties;
     }
     
@@ -46,7 +51,118 @@ public class FlexiRentSystem {
         return filteredID;
     }
     
-    public void getFilterList(String propertyType, int bedNum, int status, String suburb) {
+  
+//    public Collection getCollection() {
+//        return c;
+//    }
+    
+    public ArrayList<Property> getFilteredList() {
+        
+        return filteredList;
+    }
+    
+    public ArrayList<String> getSuburbList(){
+        return suburbList;
+    }
+    
+    public void getAllSuburbs() {
+        suburbList = new ArrayList<String>();
+        String s;
+        Connection conn = null;
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql = "SELECT suburb FROM Property";
+            Statement stmt  = conn.createStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+           
+           // loop through the result set
+           while (rs.next()) {             
+               s = rs.getString("suburb");
+               if(!suburbList.contains(s))
+               suburbList.add(s);
+           }
+          //TODO TYPE NOT MATCH EXCEPTION                   
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+      
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        } 
+    }
+    
+    public void searchListWithID() {
+        //boolean found = false;
+        //Iterator<Property>  iter = filteredList.iterator();
+       
+        filteredList = new ArrayList<Property>();
+        for ( Property curItem : properties )
+        {
+            for(String t : filteredID) {
+                if (curItem.getPropertyID().equals(t)) {
+                    //System.out.println(curItem.getSuburb());
+                    filteredList.add(curItem);
+                    //found = true;
+                    break;
+                }
+            }
+        }
+    }
+    
+    public boolean setFilterList(String propertyID) {
+        
+        Connection conn = null;
+        String pID = "";
+        filteredID = new ArrayList<String>();
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql = "SELECT propertyID FROM Property WHERE propertyID = \'" + propertyID + "\'";
+            Statement stmt  = conn.createStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+           
+           // loop through the result set
+           while (rs.next()) {             
+               pID = rs.getString("propertyID");
+               filteredID.add(pID);
+           }
+          //TODO TYPE NOT MATCH EXCEPTION  
+          if(pID != null) {          
+          searchListWithID();
+          return true;}
+          else return false;
+           
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        } 
+    }
+    
+    public void setFilterList(String propertyType, int bedNum, int status, String suburb) {
         
         Connection conn = null;
         String pType = "";
@@ -55,6 +171,7 @@ public class FlexiRentSystem {
         String s = "";
         ArrayList<String> type = new ArrayList<String>();
         String all = "";
+        filteredID = new ArrayList<String>();
         
         if (propertyType.equals("Apartment")) {
             pType = "propertyID like \'A%\'";
@@ -93,7 +210,7 @@ public class FlexiRentSystem {
             System.out.println(all);
         }
         
-        filteredID = new ArrayList<String>();
+        
         
         try {
             // db parameters
@@ -118,6 +235,8 @@ public class FlexiRentSystem {
           for(String k : filteredID) {
               System.out.println(k);
           }
+          
+          searchListWithID();
            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -129,15 +248,11 @@ public class FlexiRentSystem {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
-        } 
-        
-        
-        
-        
+        }             
     }
     
     public void getMainList() {
-        properties = new HashMap<String, Property>();
+        properties = new ArrayList<Property>();
         Connection conn = null;
         String dateL = "";
         String dateS = "";
@@ -159,7 +274,7 @@ public class FlexiRentSystem {
            // loop through the result set
            while (rs.next()) {             
                propertyID = rs.getString("propertyID");
-               //System.out.print(propertyID + ":");
+               System.out.print(propertyID + ":");
                streetNo = rs.getInt("streetNo");
                //System.out.print(streetNo + ":");
                streetName = rs.getString("streetName");
@@ -201,11 +316,13 @@ public class FlexiRentSystem {
                    property.setStartMaintain(startMaintenance);
                    }
                }
-               properties.put(propertyID,property); 
+               properties.add(property); 
            
            }
           //TODO TYPE NOT MATCH EXCEPTION  
-           
+           //c = properties.values();
+           //Set<String> key = properties.keySet();
+           //System.out.println(key);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {

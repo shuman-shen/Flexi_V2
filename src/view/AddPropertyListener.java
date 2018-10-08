@@ -3,6 +3,7 @@ package view;
 import java.io.File;
 import java.nio.file.Paths;
 
+import controller.MainWindowControl;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -30,11 +31,11 @@ import javafx.stage.Stage;
 
 public class AddPropertyListener implements EventHandler<ActionEvent> {
 
-//    private MenuItem menuItem;
-//    
-//    public AddPropertyListener(MenuItem menuItem) {
-//        this.menuItem = menuItem;
-//    }
+    private MainWindowControl mainControl;
+    
+    public AddPropertyListener(MainWindowControl mainControl) {
+        this.mainControl = mainControl;
+    }
     
     @Override 
     public void handle(ActionEvent e) {
@@ -110,7 +111,7 @@ public class AddPropertyListener implements EventHandler<ActionEvent> {
         
         root.add(new Label("Last Maintenance Date"), 0, 7);
         
-        Label disableLabel = new Label("Not available");
+        Label disableLabel = new Label("Not Required");
         disableLabel.setPrefSize(100, 27);
         disableLabel.setAlignment(Pos.CENTER);
         

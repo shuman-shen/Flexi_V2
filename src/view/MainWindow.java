@@ -1,10 +1,12 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import controller.MainWindowControl;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -30,13 +32,14 @@ public class MainWindow{
     
     private MainWindowControl mainControl;
     private FlexiRentSystem flexiModel;    
+    private HBox filterBar;
     private VBox mainView;
     private BorderPane root;
     private GridPane listView;
     private VBox property;
     private Image img;
     private ImageView imgV;
-    private Text pID;
+    private Button pID;
     private Text address;
     private Label desc;
     final private Button moreButton = new Button("More details...");
@@ -50,7 +53,7 @@ public class MainWindow{
     
     
     public ImageView getImageView() {return imgV;}
-    public Text getPropertyID() {return pID;}
+    public String getPropertyID() {return pID.getText();}
     public Text getAddress() {return address;}
     public Label getDesc() {return desc;}
     public VBox getVBox() {return property;}
@@ -63,8 +66,9 @@ public class MainWindow{
     public MainWindow(MainWindowControl m, FlexiRentSystem f) {
         mainControl = m;
         flexiModel = f;
+        
+        setMainList(mainControl.getWholeList());
         createView();
-        setMainList();
     }
     
     public void setImageView(String fileName) {
@@ -104,7 +108,8 @@ public class MainWindow{
     }    
     
     public void setPropertyID(String ID) {
-        pID = new Text(ID); 
+        pID = new Button(ID); 
+        pID.setOnAction(new DisplayDetailListener(pID.getText(), root, mainControl));
         pID.setFont(Font.font("Calibri",FontWeight.BOLD, 16));
     }
     public void setAddress(int streetNum, String streetName, String suburb) {
@@ -122,14 +127,14 @@ public class MainWindow{
         property.getChildren().addAll(imgV, ID, address, desc, moreButton);
     }
     
-    public void setMainList() {
+    public void setMainList(ArrayList<Property> list) {
         
         int i = 0; 
         int num = 1;
         
-        flexiModel.getMainList();
+        //flexiModel.getMainList();
         
-        HashMap<String, Property> list = flexiModel.getPropertyList();
+        //ArrayList<Property> list = flexiModel.getPropertyList();
         
       //Grid pane for display property list
         listView = new GridPane();
@@ -141,9 +146,8 @@ public class MainWindow{
         ColumnConstraints column = new ColumnConstraints(240);        
         listView.getColumnConstraints().addAll(column, column, column);
         
-        String d = "";
-        
-        list.forEach(String s , Property p) ->
+        String d="";
+        for(Property p : list)
          {
             String propertyID = p.getPropertyID();
             int streetNum = p.getStreetNo();
@@ -184,7 +188,7 @@ public class MainWindow{
             }
             
         }
-        mainView.getChildren().add(listView);
+        //mainView.getChildren().add(listView);
         
         
     }
@@ -201,8 +205,72 @@ public class MainWindow{
         mainView.setPadding(new Insets(10, 10, 10, 10));
       
         
-        // Create filter bar
-        HBox filterBar = new HBox(10);
+               
+              
+        //Scroll bar for the main view, 
+        ScrollPane scrollInfo = new ScrollPane();               
+        scrollInfo.setContent(mainView);       
+        scrollInfo.setVbarPolicy(ScrollBarPolicy.ALWAYS); //Always show vertical scroll bar
+        scrollInfo.setHbarPolicy(ScrollBarPolicy.AS_NEEDED); // Horizontal scroll bar is only displayed when needed
+        
+        
+        createFilterBar();   
+                       
+        mainView.getChildren().add(filterBar);
+        mainView.getChildren().add(listView);
+        
+        //Create menu bar
+        MenuBar menuBar = new MenuBar();
+        creatMenu(menuBar);
+        
+        root.setTop(menuBar);
+        //root.setBottom(filterBar);
+        root.setCenter(scrollInfo);
+        
+        
+    }
+    
+    public void creatMenu(MenuBar menuBar) {
+        
+      
+      //MenuBar menuBar = new MenuBar();
+      Menu fileMenu = new Menu("Property");
+      Menu dataMenu = new Menu("Data");
+      Menu sysMenu = new Menu("System");
+      
+      MenuItem newMenuItem = new MenuItem("Add Property");
+      newMenuItem.setOnAction(new AddPropertyListener(mainControl));
+      MenuItem rentMenuItem = new MenuItem("Rent Property");
+      rentMenuItem.setOnAction(new SearchListener());
+      
+      
+      MenuItem homeMenuItem = new MenuItem("Home Screen");
+      homeMenuItem.setOnAction(event -> {
+          setMainList(mainControl.getWholeList());
+          mainView.getChildren().set(1, listView);
+      });
+      MenuItem quitMenuItem = new MenuItem("Quit");
+      quitMenuItem.setOnAction(e -> Platform.exit());
+      
+      MenuItem importMenuItem = new MenuItem("Import Data");
+      //exitMenuItem.setOnAction(new MenuItemListener(exitMenuItem));
+      
+      MenuItem exportMenuItem = new MenuItem("Export Data");       
+      
+      fileMenu.getItems().addAll(newMenuItem, rentMenuItem);
+      dataMenu.getItems().addAll(importMenuItem, exportMenuItem);
+      sysMenu.getItems().addAll(homeMenuItem, quitMenuItem);
+      menuBar.getMenus().addAll(fileMenu, dataMenu, sysMenu);
+      
+      //return menuBar;     
+        
+        
+    }
+    
+    
+    public void createFilterBar(){
+     // Create filter bar
+        filterBar = new HBox(10);
         mainView.setPadding(new Insets(10, 10, 10, 10));
         
         Label filterLabel = new Label("Filters: ");
@@ -225,7 +293,13 @@ public class MainWindow{
 
         //TODO: generate suburb list from database
         ComboBox<String> suburbBox = new ComboBox<>();
-        suburbBox.getItems().addAll("All Suburbs", "Melbourne","Fitzory", "Kensington","Carlton");
+        suburbBox.getItems().add("All Suburbs");
+        
+        //TODO EXCEPTION FOR NO VALUE IN LIST??
+        for(String k : mainControl.getAllSuburb()) {
+            suburbBox.getItems().add(k);
+        }
+        
         suburbBox.setValue("All Suburbs");
         
         Button filterBtn = new Button("Filter");
@@ -236,15 +310,15 @@ public class MainWindow{
             boolean toFilter = mainControl.setFilter(typeBox.getValue(), roomBox.getValue(), availBox.getValue(), suburbBox.getValue());
             //listView.getChildren().removeAll();
             if (toFilter == false) {
-                listView.getChildren().removeAll();
-                setMainList();
+                //listView.getChildren().removeAll();
+                setMainList(mainControl.getWholeList());
+                mainView.getChildren().set(1, listView);
             }
             else {
                 
-//                Iterator<String> crunchifyIterator = crunchifyList.iterator();
-//                while (crunchifyIterator.hasNext()) {
-//                    System.out.println(crunchifyIterator.next());
-//                }
+                //listView.getChildren().removeAll();
+                setMainList(mainControl.getFilteredList());
+                mainView.getChildren().set(1, listView);
                 System.out.println("Filter set");
             }
             
@@ -252,71 +326,10 @@ public class MainWindow{
         filterBtn.setPrefSize(70, 30);
         
         filterBar.getChildren().addAll(filterLabel, typeBox, roomBox, availBox, suburbBox, filterBtn);
-       
-              
-        //Scroll bar for the main view, 
-        ScrollPane scrollInfo = new ScrollPane();               
-        scrollInfo.setContent(mainView);       
-        scrollInfo.setVbarPolicy(ScrollBarPolicy.ALWAYS); //Always show vertical scroll bar
-        scrollInfo.setHbarPolicy(ScrollBarPolicy.AS_NEEDED); // Horizontal scroll bar is only displayed when needed
-        
-        
-             
-                       
-        mainView.getChildren().add(filterBar);
-        
-        
-        //Create menu bar
-        MenuBar menuBar = new MenuBar();
-        creatMenu(menuBar);
-        
-        root.setTop(menuBar);
-        //root.setBottom(filterBar);
-        root.setCenter(scrollInfo);
-        
-        
+
     }
     
-    public void creatMenu(MenuBar menuBar) {
-        
-      
-      //MenuBar menuBar = new MenuBar();
-      Menu fileMenu = new Menu("Property");
-      Menu dataMenu = new Menu("Data");
-      Menu sysMenu = new Menu("System");
-      
-      MenuItem newMenuItem = new MenuItem("Add Property");
-      newMenuItem.setOnAction(new AddPropertyListener());
-      MenuItem rentMenuItem = new MenuItem("Rent Property");
-      rentMenuItem.setOnAction(new SearchListener());
-      MenuItem returnMenuItem = new MenuItem("Return Property");
-      returnMenuItem.setOnAction(new SearchListener());
-      MenuItem startMenuItem = new MenuItem("Property Maintenance");
-      startMenuItem.setOnAction(new SearchListener());
-      MenuItem endMenuItem = new MenuItem("Complete Maintenance");
-      endMenuItem.setOnAction(new SearchListener());
-      MenuItem allMenuItem = new MenuItem("Display All Properties");
-      //allMenuItem.setOnAction(new DisplayListener(allMenuItem));
-      
-      
-      MenuItem homeMenuItem = new MenuItem("Home Screen");
-      //saveMenuItem.setOnAction(new MenuItemListener(saveMenuItem));
-      MenuItem quitMenuItem = new MenuItem("Quit");
-      
-      MenuItem importMenuItem = new MenuItem("Import Data");
-      //exitMenuItem.setOnAction(new MenuItemListener(exitMenuItem));
-      
-      MenuItem exportMenuItem = new MenuItem("Export Data");       
-      
-      fileMenu.getItems().addAll(newMenuItem, rentMenuItem, returnMenuItem, startMenuItem, endMenuItem, allMenuItem);
-      dataMenu.getItems().addAll(importMenuItem, exportMenuItem);
-      sysMenu.getItems().addAll(homeMenuItem, quitMenuItem);
-      menuBar.getMenus().addAll(fileMenu, dataMenu, sysMenu);
-      
-      //return menuBar;     
-        
-        
-    }
+    
     
     public void createSearchDialog() {
         

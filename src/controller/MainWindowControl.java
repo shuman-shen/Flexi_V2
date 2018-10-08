@@ -1,6 +1,8 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 import javafx.application.Application;
 import model.*;
@@ -10,7 +12,6 @@ public class MainWindowControl {
     
   
     private FlexiRentSystem flexiModel;
-    private ArrayList<Property> filteredList; 
     public MainWindowControl(FlexiRentSystem f) {
         flexiModel = f;
         //filteredList = new ArrayList<Property>(flexiModel.getPropertyList());
@@ -23,11 +24,20 @@ public class MainWindowControl {
     }
     
     public ArrayList<Property> getFilteredList(){
-        return filteredList;
+        return flexiModel.getFilteredList();
+    }
+//  
+    public ArrayList<Property> getWholeList(){
+        return flexiModel.getPropertyList();
     }
     
+    public ArrayList<String> getAllSuburb() {
+        return flexiModel.getSuburbList();
+    }
     
-    
+//   public Collection<Property> getCollection(){
+//       return flexiModel.getCollection();
+//   }
     
     public boolean setFilter(String type, String bedNum, String condition, String suburbText) {
    
@@ -70,20 +80,20 @@ public class MainWindowControl {
         if (pType.equals("All") && num == 0 && cType == 0 && suburb.equals("General")) 
             return false;
         else {
-            flexiModel.getFilterList(pType, num, cType, suburb);
+            flexiModel.setFilterList(pType, num, cType, suburb);
+            
             return true;
         }
-        
-        
-        
-        
-        
         
         
     }
     
         
-
+    public boolean setFilter(String propertyID) {
+        return flexiModel.setFilterList(propertyID);
+    }
+    
+    
         
         
         
