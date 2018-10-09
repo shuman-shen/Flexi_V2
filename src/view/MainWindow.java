@@ -7,11 +7,13 @@ import java.util.HashMap;
 import controller.MainWindowControl;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -34,14 +36,35 @@ public class MainWindow{
     private FlexiRentSystem flexiModel;    
     private HBox filterBar;
     private VBox mainView;
+    //private StackPane root;
     private BorderPane root;
     private GridPane listView;
+    private MenuBar menuBar;
+    private ScrollPane scrollInfo;
     private VBox property;
     private Image img;
     private ImageView imgV;
     private Button pID;
     private Text address;
     private Label desc;
+    
+    
+    private HBox detailView;
+    private VBox recordView;
+    private VBox itemView;
+    private Label detailID;
+    private Label adr;
+    //private ImageView imgV2;
+    private GridPane btnGrid;
+    private Button rentBtn;
+    private Button returnBtn;
+    private Button startBtn;
+    private Button endBtn;
+    
+    private ArrayList<Property> tmp;
+    private Property curItm;
+    private int status;
+    
     final private Button moreButton = new Button("More details...");
     
     private ArrayList<VBox> list = new ArrayList<VBox>();
@@ -75,7 +98,7 @@ public class MainWindow{
         String p = "";
         p = folder + fileName;
         //String t = "/src/view/images/A02.jpeg";
-        System.out.print("image path" + p);
+        //System.out.print("image path" + p);
         
         
         try {
@@ -109,7 +132,17 @@ public class MainWindow{
     
     public void setPropertyID(String ID) {
         pID = new Button(ID); 
-        pID.setOnAction(new DisplayDetailListener(pID.getText(), mainControl));
+        
+        String n = pID.getText();
+        pID.setOnAction(new DisplayDetailListener(pID.getText(),mainControl));
+//        pID.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                
+//               //createDetailView(pID.getText());
+//                System.out.println("ID: " + pID.getText());
+//            } 
+//        });
         pID.setFont(Font.font("Calibri",FontWeight.BOLD, 16));
     }
     public void setAddress(int streetNum, String streetName, String suburb) {
@@ -165,24 +198,33 @@ public class MainWindow{
             
             property.getChildren().addAll(imgV, pID, address, desc);
             
+            
+            
+            
+//            pID.setOnAction(details ->
+//            {  System.out.print(pID.getText());
+//               createDetailView(pID.getText());
+//               //changeTop();
+//           });
+            
             RowConstraints row = new RowConstraints(300);
             if (num%3 == 1) {
                 listView.getRowConstraints().add(row);
                 listView.add(property, 0, i);
-                System.out.println("Coordinates:  0, " + i);
-                System.out.println("Number:  " + num);
+                //System.out.println("Coordinates:  0, " + i);
+                //System.out.println("Number:  " + num);
                 num++;
             }
             else if (num%3 ==2){
                 listView.add(property, 1, i);
-                System.out.println("Coordinates:  1, " + i);
-                System.out.println("Number:  " + num);
+                //System.out.println("Coordinates:  1, " + i);
+                //System.out.println("Number:  " + num);
                 num++;
             } 
             else {
                 listView.add(property, 2, i);
-                System.out.println("Coordinates:  2, " + i);
-                System.out.println("Number:  " + num);
+                //System.out.println("Coordinates:  2, " + i);
+                //System.out.println("Number:  " + num);
                 i ++;
                 num++;
             }
@@ -192,6 +234,89 @@ public class MainWindow{
         
         
     }
+    
+    
+    public void createDetailView(String ID) {
+        
+        if(mainControl.setFilter(ID))
+            tmp = mainControl.getFilteredList();
+            
+        // get list item(0)
+            curItm = tmp.get(0);
+            System.out.println("\n ID get is: " +curItm.getPropertyID());
+            status = curItm.getStatus();
+        setImageView(curItm.getImage());   
+        
+        detailID = new Label(curItm.getPropertyID());
+        
+        String a = curItm.getStreetNo() + " " + curItm.getStreetName() + " " + curItm.getSuburb();
+        adr = new Label(a);
+        //address.setWrapText(true);
+        
+        Label lastMaintainDate = new Label("Last Mainetance Date: ");
+        
+        btnGrid = new GridPane();
+        btnGrid.setGridLinesVisible(true);
+        
+        btnGrid.setPadding(new Insets(20));
+        btnGrid.setHgap(10);
+        btnGrid.setVgap(10);
+        ColumnConstraints column = new ColumnConstraints(160);        
+        btnGrid.getColumnConstraints().addAll(column, column);
+        
+        rentBtn = new Button("Rent Property");
+        btnGrid.add(rentBtn,0,0);
+        
+        returnBtn = new Button("Return Property");
+        btnGrid.add(returnBtn,1,0);
+        
+        startBtn = new Button("Start Maintenance");
+        btnGrid.add(startBtn,0,1);
+        
+        endBtn = new Button("Finish Maintenance");
+        btnGrid.add(endBtn,1,1);
+        
+        
+        Text desc = new Text(curItm.getDescription());
+        desc.setWrappingWidth(400);
+        
+        detailView = new HBox(10);
+        itemView = new VBox(10);
+        recordView = new VBox(10);
+        itemView.getChildren().addAll(imgV, detailID, address, lastMaintainDate, btnGrid, desc);
+        //detailView.getChildren().add(itemView);
+        
+        
+        detailView.getChildren().add(itemView);
+        root.setCenter(detailView);
+        //detailView.setVisible(true);
+        //root.getChildren().add(detailView);
+       
+       
+        //System.out.println("That step");
+        
+        
+        
+    }
+    
+//    private void changeTop() {
+//        ObservableList<Node> childs = this.root.getChildren();
+//  
+//        if (childs.size() > 1) {
+//            //
+//            Node topNode = childs.get(childs.size()-1);
+//           
+//            // This node will be brought to the front
+//            Node newTopNode = childs.get(childs.size()-2);
+//                   
+//            topNode.setVisible(false);
+//            topNode.toBack();
+//           
+//            newTopNode.setVisible(true);
+//        }
+//    }
+    
+    
     
     
     //@Override // Override the start method in the Application class
@@ -208,7 +333,7 @@ public class MainWindow{
                
               
         //Scroll bar for the main view, 
-        ScrollPane scrollInfo = new ScrollPane();               
+        scrollInfo = new ScrollPane();               
         scrollInfo.setContent(mainView);       
         scrollInfo.setVbarPolicy(ScrollBarPolicy.ALWAYS); //Always show vertical scroll bar
         scrollInfo.setHbarPolicy(ScrollBarPolicy.AS_NEEDED); // Horizontal scroll bar is only displayed when needed
@@ -220,17 +345,20 @@ public class MainWindow{
         mainView.getChildren().add(listView);
         
         //Create menu bar
-        MenuBar menuBar = new MenuBar();
-        creatMenu(menuBar);
+        menuBar = new MenuBar();
+        createMenu();
         
         root.setTop(menuBar);
-        //root.setBottom(filterBar);
+        //pane.setBottom(filterBar);
         root.setCenter(scrollInfo);
+        //pane.setVisible(true);
+        //root = new StackPane();
+        //root.getChildren().add(pane);
         
         
     }
     
-    public void creatMenu(MenuBar menuBar) {
+    public void createMenu() {
         
       
       //MenuBar menuBar = new MenuBar();
@@ -241,13 +369,14 @@ public class MainWindow{
       MenuItem newMenuItem = new MenuItem("Add Property");
       newMenuItem.setOnAction(new AddPropertyListener(mainControl));
       MenuItem rentMenuItem = new MenuItem("Rent Property");
-      rentMenuItem.setOnAction(new SearchListener());
+      rentMenuItem.setOnAction(new SearchListener(mainControl));
       
       
       MenuItem homeMenuItem = new MenuItem("Home Screen");
       homeMenuItem.setOnAction(event -> {
           setMainList(mainControl.getWholeList());
           mainView.getChildren().set(1, listView);
+          root.setCenter(scrollInfo);
       });
       MenuItem quitMenuItem = new MenuItem("Quit");
       quitMenuItem.setOnAction(e -> Platform.exit());

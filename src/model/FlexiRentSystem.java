@@ -124,7 +124,7 @@ public class FlexiRentSystem {
     
     // Filter out the property matches specific propertyID
     public boolean setFilterList(String propertyID) {
-        
+        System.out.println("\n ID input " + propertyID);
         Connection conn = null;
         String pID = "";
         filteredID = new ArrayList<String>();
@@ -137,12 +137,14 @@ public class FlexiRentSystem {
             //System.out.println("Connection to SQLite has been established.");
             
             String sql = "SELECT propertyID FROM Property WHERE propertyID = \'" + propertyID + "\'";
+            System.out.println(sql);
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
            
            // loop through the result set
            while (rs.next()) {             
                pID = rs.getString("propertyID");
+               System.out.println("\n ID FROM DATABASE: " + pID);
                filteredID.add(pID);
            }
           //TODO TYPE NOT MATCH EXCEPTION  

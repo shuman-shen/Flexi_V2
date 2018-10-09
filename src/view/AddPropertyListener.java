@@ -174,6 +174,7 @@ public class AddPropertyListener implements EventHandler<ActionEvent> {
         root.add(desc, 1, 8);
                                
         Button btAdd = new Button("Add Property");
+        btAdd.setOnAction(new DisplayDetailListener("A_9413CPTP",mainControl));
         root.add(btAdd, 1, 9);
                    
            

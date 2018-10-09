@@ -3,13 +3,16 @@ package view;
 import java.util.ArrayList;
 
 import controller.MainWindowControl;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
@@ -69,7 +72,8 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
             root = new BorderPane();
             
             createDetailView();
-            
+            menu = new MenuBar();
+            createMenu();
             
             
             scroll = new ScrollPane();               
@@ -77,6 +81,7 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
             scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS); //Always show vertical scroll bar
             scroll.setHbarPolicy(ScrollBarPolicy.AS_NEEDED); // Horizontal scroll bar is only displayed when needed
             
+            root.setTop(menu);
             root.setCenter(scroll);
             
             Scene newScene = new Scene(root);
@@ -142,6 +147,46 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
         
         
     }
+    
+    
+    public void createMenu() {
+        
+        
+        //MenuBar menuBar = new MenuBar();
+        Menu fileMenu = new Menu("Property");
+        Menu dataMenu = new Menu("Data");
+        Menu sysMenu = new Menu("System");
+        
+        MenuItem newMenuItem = new MenuItem("Add Property");
+        newMenuItem.setOnAction(new AddPropertyListener(mainControl));
+        MenuItem rentMenuItem = new MenuItem("Rent Property");
+        rentMenuItem.setOnAction(new SearchListener(mainControl));
+        
+        
+        MenuItem homeMenuItem = new MenuItem("Home Screen");
+//        homeMenuItem.setOnAction(event -> {
+//            setMainList(mainControl.getWholeList());
+//            mainView.getChildren().set(1, listView);
+//            root.setCenter(scrollInfo);
+//        });
+        MenuItem quitMenuItem = new MenuItem("Quit");
+        quitMenuItem.setOnAction(e -> Platform.exit());
+        
+        MenuItem importMenuItem = new MenuItem("Import Data");
+        //exitMenuItem.setOnAction(new MenuItemListener(exitMenuItem));
+        
+        MenuItem exportMenuItem = new MenuItem("Export Data");       
+        
+        fileMenu.getItems().addAll(newMenuItem, rentMenuItem);
+        dataMenu.getItems().addAll(importMenuItem, exportMenuItem);
+        sysMenu.getItems().addAll(homeMenuItem, quitMenuItem);
+        menu.getMenus().addAll(fileMenu, dataMenu, sysMenu);
+        
+        //return menuBar;     
+          
+          
+      }
+    
     
     public void setImage() {
         String cPath = path+ curItm.getImage();
