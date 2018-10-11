@@ -5,9 +5,12 @@ import utilities.DateTime;
 //import java.time.format.DateTimeFormatter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class FlexiRentSystem {
 
@@ -26,15 +29,14 @@ public class FlexiRentSystem {
     private String streetName ;
     private String suburb;
     private int bedNum = 3;
-    private DateTime lastMaintainDate;
-    private DateTime startMaintenance;
+    private LocalDate lastMaintainDate;
+    private LocalDate startMaintenance;
     private int status = 2;
     private String image;
     private String description;
     private final String checkDate = "(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/((19|20)\\d\\d)";
     private ArrayList<String> suburbList;
-    //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    //LocalDate dateTime = LocalDate.parse(str, formatter);
+    
     
     public FlexiRentSystem() {
         getMainList();
@@ -64,6 +66,115 @@ public class FlexiRentSystem {
     public ArrayList<String> getSuburbList(){
         return suburbList;
     }
+    
+    public String addApartment(int streetNo, String streetName, 
+            String suburb, int bedNum, String image, String description) {
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String today = LocalDate.now().format(formatter);
+        
+        generateID();
+        propertyID = "A_" + propertyID;
+        Property p = new Apartment(propertyID, streetNo, streetName, 
+                suburb,bedNum,LocalDate.now(), 
+                status, image,description);
+        insertNew(propertyID, streetNo, streetName, 
+                suburb,bedNum,today, 
+                2, image , description);
+        properties.add(p);
+        return propertyID;
+        }
+           
+   public String addPremiumSuite(int streetNo, String streetName, 
+           String suburb, LocalDate lastMaintainDate, String image, String description) {
+       
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+       String formattedDate = lastMaintainDate.format(formatter);
+       
+       
+       generateID();
+       propertyID = "S_" + propertyID;
+       Property p = new Apartment(propertyID, streetNo, streetName, 
+               suburb,3,lastMaintainDate, 
+               2, image,description);
+       //put try catch inside this method
+       
+       insertNew(propertyID, streetNo, streetName, 
+               suburb,bedNum,formattedDate, 
+               2 , image , description);
+       properties.add(p);
+       return propertyID;
+       
+       
+       
+   }
+        
+        
+        
+    
+    public void generateID() {
+        
+        
+        Random r = new Random();
+        int n;
+        char c;
+        propertyID = "";
+                
+        for (int i=0; i<4; i++) {
+            n = r.nextInt(10);
+            propertyID = propertyID + Integer.toString(n);                             
+        }
+            
+        for (int j=0; j<4; j++) {
+            c = (char)(r.nextInt(26) + 'a');
+            propertyID = propertyID + Character.toString(c);
+        }
+            
+        propertyID = propertyID.toUpperCase();
+        
+       
+    }
+    
+    
+    
+    public void insertNew(String ID, int streetNo, String streetName, 
+            String suburb, int bedNum, String lastMaintainDate, 
+            int status, String image, String description) {
+        Connection conn = null;
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql = "INSERT INTO Property (propertyID, streetNo, streetName, "
+                    + "suburb, bedNum, lastMaintainDate, "
+                    + "status, image,description) VALUES(?,?,?,?,?,?,?,?,?)";
+            Statement stmt  = conn.createStatement();                     
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, ID);
+                pstmt.setInt(2, streetNo);
+                pstmt.setString(3, streetName);
+                pstmt.setString(4, suburb);
+                pstmt.setInt(5, bedNum);
+                pstmt.setString(6, lastMaintainDate);
+                pstmt.setInt(7, status);
+                pstmt.setString(8, image);
+                pstmt.setString(9, description);
+               
+                pstmt.executeUpdate();
+                conn.close();
+                
+        }
+            catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+       
+        
+    }
+    
     
     //Generate suburb list for displayed at MainWindow filter
     public void getAllSuburbs() {
@@ -151,21 +262,21 @@ public class FlexiRentSystem {
           if(pID != null) {          
           searchListWithID();
           // TODO EXCEPTION REQUIRED TO SUBSTITUDE BOOLEAN RETURN VALUE
+          conn.close();
+          
           return true;}
-          else return false;
+          
+          else {
+              
+              conn.close();
+              return false;}
+          
+          
            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        } 
+        }
     }
     
     // Filter out property list according to MainWindow filter conditions
@@ -304,14 +415,14 @@ public class FlexiRentSystem {
                
                
                //Parse date format
-               lastMaintainDate = checkDayFormat(dateL);                             
+               lastMaintainDate = convertDate(dateL);                             
                
                if(propertyID.startsWith("A")) {
                    property = new Apartment(propertyID, streetNo, streetName, 
                            suburb, bedNum, lastMaintainDate, 
                            status, image, description);
                    if(dateS != null) {
-                       startMaintenance = checkDayFormat(dateS);
+                       startMaintenance = convertDate(dateS);
                    property.setStartMaintain(startMaintenance);
                    }
                }
@@ -320,46 +431,33 @@ public class FlexiRentSystem {
                            suburb, bedNum, lastMaintainDate, 
                            status, image, description);
                    if(dateS != null) {
-                       startMaintenance = checkDayFormat(dateS);
+                       startMaintenance = convertDate(dateS);
                    property.setStartMaintain(startMaintenance);
                    }
                }
                properties.add(property); 
            
            }
-          //TODO TYPE NOT MATCH EXCEPTION  
-           //c = properties.values();
-           //Set<String> key = properties.keySet();
-           //System.out.println(key);
+           conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }      
+        } 
+            
         
     }
         
-    private DateTime checkDayFormat(String in) {
+    private LocalDate convertDate(String in) {
         
         if(in.matches(checkDate)) {            
-            String[] seperate = in.split("/");
-            int d = Integer.parseInt(seperate[0]);
-            int m = Integer.parseInt(seperate[1]);
-            int y = Integer.parseInt(seperate[2]);           
-            DateTime day = new DateTime(d,m,y);
-            return day;
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+          LocalDate date = LocalDate.parse(in, formatter);
+            return date;
             
             
         }
         else {
             //TODO DATEFORMATE EXCEPTION
-            System.out.println("Invalid input format.");
+            System.out.println("Date data corrupted.");
             return null;
         }
     }

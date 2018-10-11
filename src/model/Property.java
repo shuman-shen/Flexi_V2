@@ -1,5 +1,6 @@
 package model;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 
 import utilities.DateTime;
 
@@ -10,9 +11,9 @@ public abstract class Property {
     private String streetName;
     private String suburb;
     private int bedNum;
-    private DateTime lastMaintainDate;
+    private LocalDate lastMaintainDate;
     private double rentalRate;
-    private DateTime startMaintenance;
+    private LocalDate startMaintenance;
     private int status = 2; // 1: rented, 2: available/returned, 3: under maintenance 
     private String image;
     private String description;
@@ -21,7 +22,7 @@ public abstract class Property {
     DecimalFormat df2 = new DecimalFormat("#.00");
     
     public Property(String propertyID, int streetNo, String streetName, 
-            String suburb, int bedNum, DateTime lastMaintainDate, 
+            String suburb, int bedNum, LocalDate lastMaintainDate, 
             int status, String image, String description) {
         this.propertyID = propertyID;
         this.streetNo = streetNo;
@@ -37,7 +38,7 @@ public abstract class Property {
     }
     
     public Property(String propertyID, int streetNo, String streetName, 
-            String suburb, int bedNum, DateTime lastMaintainDate ) {
+            String suburb, int bedNum, LocalDate lastMaintainDate ) {
         this.propertyID = propertyID;
         this.streetNo = streetNo;
         this.streetName = streetName;
@@ -55,8 +56,8 @@ public abstract class Property {
     public int getBedNum() {return bedNum;};
     public double getRentalRate() {return rentalRate;}
     public int getStatus() {return status;}
-    public DateTime getStartMaintainDate() {return startMaintenance;}
-    public DateTime getLastMaintainDate() {return lastMaintainDate;}
+    public LocalDate getStartMaintainDate() {return startMaintenance;}
+    public LocalDate getLastMaintainDate() {return lastMaintainDate;}
     public String getImage() {return this.image;}
     public String getDescription() {return description;}
     
@@ -76,17 +77,17 @@ public abstract class Property {
         rentalRate = getRate(bedNum);
     }
     
-    public void setStartMaintain(DateTime today) {
+    public void setStartMaintain(LocalDate today) {
         startMaintenance = today;
         status = 3;
     }
     
-    public void setLastMaintainDate(DateTime completeDate) {
-        lastMaintainDate = completeDate;
+    public void setLastMaintainDate(LocalDate newDate) {
+        lastMaintainDate = newDate;
         status = 2;
     }
     
-    public void resetLastMaintainDate(DateTime startMaintenance) {
+    public void resetLastMaintainDate(LocalDate startMaintenance) {
         lastMaintainDate = startMaintenance;
     }
     

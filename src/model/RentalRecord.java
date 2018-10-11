@@ -1,14 +1,15 @@
 package model;
 import utilities.DateTime;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 
 public class RentalRecord {
     //private Property property;    
     private String recordID;
     private String customerID;
-    private DateTime rentDate;
-    private DateTime estimatedReturnDate;
-    private DateTime actualReturnDate;
+    private LocalDate rentDate;
+    private LocalDate estimatedReturnDate;
+    private LocalDate actualReturnDate;
     private double rentalFee;
     private double lateFee;
 
@@ -17,7 +18,7 @@ public class RentalRecord {
     
   
     
-    public RentalRecord(String recordID, String customerID, DateTime rentDate, DateTime estimatedReturnDate) {
+    public RentalRecord(String recordID, String customerID, LocalDate rentDate, LocalDate estimatedReturnDate) {
         this.recordID = recordID;
         this.customerID = customerID;
         this.rentDate = rentDate;
@@ -31,15 +32,15 @@ public class RentalRecord {
     public String getCustomerID() {
         return recordID;
     }
-    public DateTime getRentDate() {
+    public LocalDate getRentDate() {
         return rentDate;
         
     }
-    public DateTime getEstimatedReturnDate() {
+    public LocalDate getEstimatedReturnDate() {
         return estimatedReturnDate;
         
     }
-    public DateTime getActualReturnDate() {
+    public LocalDate getActualReturnDate() {
         return actualReturnDate;
         
     }
@@ -57,7 +58,7 @@ public class RentalRecord {
     
     
     
-    public void setActualReturnDate(DateTime actual) {
+    public void setActualReturnDate(LocalDate actual) {
         actualReturnDate = actual;
         
     }
@@ -82,12 +83,13 @@ public class RentalRecord {
         
         //recordId:rentDate:estimatedReturnDate:actualReturnDate:rentalFee:lateFee
         
-        if(actualReturnDate == null) {
-            return recordID+":"+rentDate+":"+estimatedReturnDate+":"+"none"+""+":"+"none"+":"+"none";
-        }
-        else {
-            return recordID+":"+rentDate+":"+estimatedReturnDate.getFormattedDate()+":"+actualReturnDate.getFormattedDate()+":"+df2.format(rentalFee)+":"+df2.format(lateFee);
-        }
+//        if(actualReturnDate == null) {
+//            return recordID+":"+rentDate+":"+estimatedReturnDate+":"+"none"+""+":"+"none"+":"+"none";
+//        }
+//        else {
+//            return recordID+":"+rentDate+":"+estimatedReturnDate.getFormattedDate()+":"+actualReturnDate.getFormattedDate()+":"+df2.format(rentalFee)+":"+df2.format(lateFee);
+//        }
+        return null;
    }
     
     
@@ -98,27 +100,28 @@ public class RentalRecord {
         
        
               
-        String recordDetail;
-        
-        // formatting rental and late fee to 2 decimal places
-        
-        if (actualReturnDate == null) {
-            recordDetail = "Record ID:             "+ recordID
-                    + "\n"+"Rent Date:             " + rentDate.getFormattedDate()
-                    + "\n"+"Estimated Return Date: " + estimatedReturnDate.getFormattedDate();
-        }
-        else {
-            recordDetail = "Record ID:             "+ recordID
-                    + "\n"+"Rent Date:             " + rentDate
-                    + "\n"+"Estimated Return Date: " + estimatedReturnDate.getFormattedDate()
-                    + "\n"+"Actual Return Date:    " + actualReturnDate.getFormattedDate()
-                    + "\n"+"Rental Fee:            " + df2.format(rentalFee)
-                    + "\n"+"Late Fee:              " + df2.format(lateFee);
-            
-        }
-        return recordDetail;
-        
-        
+//        String recordDetail;
+//        
+//        // formatting rental and late fee to 2 decimal places
+//        
+//        if (actualReturnDate == null) {
+//            recordDetail = "Record ID:             "+ recordID
+//                    + "\n"+"Rent Date:             " + rentDate.getFormattedDate()
+//                    + "\n"+"Estimated Return Date: " + estimatedReturnDate.getFormattedDate();
+//        }
+//        else {
+//            recordDetail = "Record ID:             "+ recordID
+//                    + "\n"+"Rent Date:             " + rentDate
+//                    + "\n"+"Estimated Return Date: " + estimatedReturnDate.getFormattedDate()
+//                    + "\n"+"Actual Return Date:    " + actualReturnDate.getFormattedDate()
+//                    + "\n"+"Rental Fee:            " + df2.format(rentalFee)
+//                    + "\n"+"Late Fee:              " + df2.format(lateFee);
+//            
+//        }
+//        return recordDetail;
+//        
+//        
+        return null;
     }
     
     

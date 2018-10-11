@@ -1,6 +1,8 @@
 package model;
 import utilities.DateTime;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Apartment extends Property {
@@ -8,13 +10,13 @@ public class Apartment extends Property {
     
     
     public Apartment(String propertyID, int streetNo, String streetName, 
-            String suburb, int bedNum, DateTime lastMaintainDate) {
+            String suburb, int bedNum, LocalDate lastMaintainDate) {
         super(propertyID, streetNo, streetName, suburb, bedNum, lastMaintainDate);
         
     }
     
     public Apartment(String propertyID, int streetNo, String streetName, 
-            String suburb, int bedNum, DateTime lastMaintainDate, 
+            String suburb, int bedNum, LocalDate lastMaintainDate, 
             int status, String image, String description) {
         super(propertyID, streetNo, streetName, suburb, bedNum, lastMaintainDate, 
                 status, image, description);
@@ -22,56 +24,28 @@ public class Apartment extends Property {
        
     }
     
-    public boolean checkDate(DateTime date, int numOfDay) {
-        
-        SimpleDateFormat weekdayForm = new SimpleDateFormat("E");
-        long currentTime = date.getTime();
-        Date d = new Date(currentTime);
-        String weekday = weekdayForm.format(d);
-        
+    
         /*Each Apartment can be rented for:
         - a minimum of 2 days if the rental day is between Sunday and Thursday inclusively
         - a minimum of 3 days if the rental day is Friday or Saturday
         - a maximum of 28 days*/
         
-        
-        if (weekday.startsWith("Fri") | weekday.startsWith("Sat")) {
-            if (numOfDay > 2 && numOfDay < 29) {return true;}
-            else {return false;}
-        }
-        else {
-            if (numOfDay > 1 && numOfDay < 29) {return true;}
-            else {return false;}
-        }
-        
-    }
+      
     
     
-    
-    public boolean rent(String customerId, DateTime rentDate, int numOfRentDay) {
+    public void rent(String customerId, LocalDate rentDate, int numOfRentDay) {
         
-        //boolean operation = true;
+     
         String recordID;
-        DateTime estimatedReturnDate = new DateTime(rentDate, numOfRentDay);
-        //RentalRecord rec = super.records[0];
+        LocalDate estimatedReturnDate = rentDate.plusDays(numOfRentDay);
+       
            
-        if(checkDate(rentDate, numOfRentDay) && super.getStatus() == 2) {
-             
-            // First index of array empty: adding the record directly.            
-            // Check conditions when record exists. 
-            // A property with returned date means available to rent
-            /*if(!(rec==null)) {
-                
-                                               
-                // ASSUME: When a property is booked in a future day (returned date empty), it is no longer available for rent.
-                if(rec.getActualReturnDate()== null) operation = false;
-                
-            }*/
-        //}
         
-        //if(operation == true) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+            String formattedDate = estimatedReturnDate.format(formatter);
+           
             
-            recordID = super.getPropertyID() + "_"+ customerId + "_" + estimatedReturnDate.getEightDigitDate();
+            recordID = super.getPropertyID() + "_"+ customerId + "_" + formattedDate;
             
             RentalRecord r = new RentalRecord(recordID, customerId, rentDate, estimatedReturnDate);
             super.addRecord(r);
@@ -79,15 +53,9 @@ public class Apartment extends Property {
             System.out.println("Apartment " + super.getPropertyID() + " is now rented by customer "+ customerId);
             
             super.setToRent(true);
-            return true;
+           
             
          
-        }
-        else {
-            System.out.println("Apartment " + super.getPropertyID() + " could not be rented");
-            return false;
-        }
-        
         
         
     }
@@ -174,24 +142,24 @@ public class Apartment extends Property {
     public boolean performMaintenance() {
         // ASSUME1: apartment maintenance is ONLY called on the current day.
         // ASSUME2: apartment rented even in future days will NOT allow maintenance.
-        DateTime today = new DateTime();
-        if (super.getStatus() == 2) {
-            super.setStartMaintain(today);
-            super.resetLastMaintainDate(today);
-            
-            System.out.println("Property " + super.getPropertyID() + " is under maintainance from today.");
-            return true;
-        }
-        else if (super.getStatus() == 3){
-            System.out.println("The property " + super.getPropertyID() + " has already been on maintenance.");
-            return true;
-        }
-        else {
-            System.out.println("The property has been rented and not available for maintenance."); 
-            return false;
-        }
-        
-        
+//        DateTime today = new DateTime();
+//        if (super.getStatus() == 2) {
+//            super.setStartMaintain(today);
+//            super.resetLastMaintainDate(today);
+//            
+//            System.out.println("Property " + super.getPropertyID() + " is under maintainance from today.");
+//            return true;
+//        }
+//        else if (super.getStatus() == 3){
+//            System.out.println("The property " + super.getPropertyID() + " has already been on maintenance.");
+//            return true;
+//        }
+//        else {
+//            System.out.println("The property has been rented and not available for maintenance."); 
+//            return false;
+//        }
+//        
+        return true;
         //this method will return true if the property is now under maintenance.
         
         
@@ -201,20 +169,21 @@ public class Apartment extends Property {
     public boolean completeMaintenance(DateTime completionDate) {
         int diff = 1;
      
-        diff = DateTime.diffDays(completionDate, super.getStartMaintainDate());
-        
-        //Maintenance can be set to completed on the same day of last maintenance date.
-        if (super.getStatus() == 3 && diff > -2) {
-            
-            super.setLastMaintainDate(completionDate);
-            System.out.println(super.getPropertyID() + " has all maintenance completed and ready for rent." );
-            return true;
-            
-        }
-        else {
-            System.out.println("Invalid. Cannot complete maintenance for the property." );
-            return false;
-        }
+//        diff = DateTime.diffDays(completionDate, super.getStartMaintainDate());
+//        
+//        //Maintenance can be set to completed on the same day of last maintenance date.
+//        if (super.getStatus() == 3 && diff > -2) {
+//            
+//            super.setLastMaintainDate(completionDate);
+//            System.out.println(super.getPropertyID() + " has all maintenance completed and ready for rent." );
+//            return true;
+//            
+//        }
+//        else {
+//            System.out.println("Invalid. Cannot complete maintenance for the property." );
+//            return false;
+//        }
+        return true;
         
     }
     

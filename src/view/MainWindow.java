@@ -112,7 +112,7 @@ public class MainWindow{
         catch (IllegalArgumentException i){
            
             //TODO CHANGE WARNING TO DIALOG BOX
-            System.out.println("image path invalid");
+            System.out.println("image path invalid -Main");
             
             try {                
                 Image noImg = new Image(pathN);
