@@ -190,7 +190,7 @@ public class AddPropertyListener implements EventHandler<ActionEvent> {
             }                                 
         });
         
-        root.add(new Label("Street Number"), 0, 3);
+        root.add(new Label("Street No. (number input only)"), 0, 3);
         streetNum = new TextField();
         //streetNum.setPrefWidth(100);
         streetNum.textProperty().addListener(new ChangeListener<String>() {

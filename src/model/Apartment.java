@@ -1,5 +1,11 @@
 package model;
 import utilities.DateTime;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,21 +44,62 @@ public class Apartment extends Property {
      
         String recordID;
         LocalDate estimatedReturnDate = rentDate.plusDays(numOfRentDay);
-       
-           
-        
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-            String formattedDate = estimatedReturnDate.format(formatter);
+             
+            String shortFormattedDate = estimatedReturnDate.format(super.getShortDateFormat());
+            String formattedEstDate = estimatedReturnDate.format(super.getDateFormat());
            
             
-            recordID = super.getPropertyID() + "_"+ customerId + "_" + formattedDate;
+            recordID = super.getPropertyID() + "_"+ customerId + "_" + shortFormattedDate;
+            
+            Connection conn = null;
+            try {
+                // db parameters
+                String url = "jdbc:sqlite:src/database/FlexiData.db";
+                // create a connection to the database
+                conn = DriverManager.getConnection(url);
+                
+                //System.out.println("Connection to SQLite has been established.");
+                
+                String sql1 = "INSERT INTO RentalRecord (recordID, propertyID, customerID, rentDate, estimatedReturnDate) "
+                        + "VALUES(?,?,?,?)";
+                Statement stmt1  = conn.createStatement();                     
+                PreparedStatement pstmt1 = conn.prepareStatement(sql1);
+                    pstmt1.setString(1, recordID);
+                    pstmt1.setString(2, super.getPropertyID());
+                    pstmt1.setString(3, customerId);
+                    pstmt1.setString(4, rentDate.format(getDateFormat()));
+                    pstmt1.setString(5, formattedEstDate);                   
+                    pstmt1.executeUpdate();
+                    
+                System.out.println("first done.");    
+                    
+                String sql2 = "UPDATE Property SET status = ? "
+                            + "WHERE propertyID = ?";
+                Statement stmt2  = conn.createStatement();                     
+                PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+                    pstmt2.setInt(1, 1);
+                    pstmt2.setString(2, super.getPropertyID());                
+                    pstmt2.executeUpdate();
+                    
+                    System.out.println("second done."); 
+                    conn.close();
+                    
+            }
+                catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            
+            
+            
+            
+            
             
             RentalRecord r = new RentalRecord(recordID, customerId, rentDate, estimatedReturnDate);
             super.addRecord(r);
             
             System.out.println("Apartment " + super.getPropertyID() + " is now rented by customer "+ customerId);
             
-            super.setToRent(true);
+            super.setToRent();
            
             
          
@@ -74,116 +121,183 @@ public class Apartment extends Property {
     }
     
             
-    public boolean returnProperty(DateTime returnDate) {
+    public void returnProperty(LocalDate returnDate) {
         
         
-        int actualDiff = 2;
+        int actualDiff = 1;
         int lateDiff = 0;
         int estimateDiff = 2;
         
-        RentalRecord rec = super.records[0];
-        actualDiff = DateTime.diffDays(returnDate, rec.getRentDate());
-        estimateDiff = DateTime.diffDays(rec.getEstimatedReturnDate(), rec.getRentDate());
-        lateDiff = DateTime.diffDays(returnDate, rec.getEstimatedReturnDate());
         
-        //status: rented
-        if(super.getStatus() == 1) {
-             
+        //ascending order
+        RentalRecord rec = super.records.get(0);
+        
+        actualDiff = returnDate.compareTo(rec.getRentDate());
+        estimateDiff = rec.getEstimatedReturnDate().compareTo(rec.getRentDate());
+        lateDiff = returnDate.compareTo(rec.getEstimatedReturnDate());
+       
+            try { 
             if (actualDiff>0) {
                 
-                System.out.println("Apartment " + super.getPropertyID() + " is returned by customer "+ rec.getCustomerID());
-                System.out.println("Property ID: " + super.getPropertyID()
-                          + "\n" + "Address:     " + super.getStreetNo() + " " + super.getStreetName() + " " + super.getSuburb()
-                          + "\n" + "Type:        Apartment"
-                          + "\n" + "Bedroom:     " + super.getBedNum()
-                          + "\n" + "Status:      Available");
-                
-                System.out.println("RENTAL RECORD");
-                System.out.println("Record ID:             " + rec.getRecordID()
-                          + "\n" + "Rent Date:             " + rec.getRentDate().getFormattedDate()
-                          + "\n" + "Estimated Return Date: " + rec.getEstimatedReturnDate().getFormattedDate()
-                          + "\n" + "Actual Return Date:    " + returnDate.getFormattedDate());
-                
                 super.setRate();
-                System.out.println(super.getRentalRate());
                 
                 if (lateDiff > 0) {
                         
                     rec.setRentalFee(estimateDiff, super.getRentalRate());
                     rec.setLateFee(lateDiff, super.getRentalRate());
-                    System.out.println("Rental Fee:            " + super.df2.format(rec.getRentalFee())
-                              + "\n" + "Late Fee:              " + super.df2.format(rec.getLateFee()));
+                    //System.out.println("Rental Fee:            " + super.df2.format(rec.getRentalFee())
+                     //         + "\n" + "Late Fee:              " + super.df2.format(rec.getLateFee()));
                 }
                 else {
+                    //rec.setLateFee(0, super.getRentalRate());
                     rec.setRentalFee(actualDiff, super.getRentalRate());
-                    System.out.println("Rental Fee:            " + super.df2.format(rec.getRentalFee()));
+                    
                 }
                 
                 //this method will return TRUE if the property now can be rented successfully.
                 rec.setActualReturnDate(returnDate);
-                super.setToReturn(true);
-                return true;
+                
+                Connection conn = null;
+              
+                    // db parameters
+                    String url = "jdbc:sqlite:src/database/FlexiData.db";
+                    // create a connection to the database
+                    conn = DriverManager.getConnection(url);
+                    
+                    //System.out.println("Connection to SQLite has been established.");
+                    
+                    String sql1 = "UPDATE RentalRecord SET actualReturnDate = ? , "
+                                + "rentalFee = ? , "
+                                + "lateFee = ? "
+                                + "WHERE recordId = ?";
+                    Statement stmt1  = conn.createStatement();                     
+                    PreparedStatement pstmt1 = conn.prepareStatement(sql1);
+                        pstmt1.setString(1, returnDate.format(getDateFormat()));
+                        pstmt1.setDouble(2, rec.getRentalFee());
+                        pstmt1.setDouble(3, rec.getLateFee());
+                        pstmt1.setString(4, rec.getRecordID());    
+                        pstmt1.executeUpdate();
+                        
+                        
+                    String sql2 = "UPDATE Property SET status = ? "
+                                + "WHERE propertyID = ?";
+                    Statement stmt2  = conn.createStatement();                     
+                    PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+                        pstmt2.setInt(1, 2);
+                        pstmt2.setString(2, super.getPropertyID());                
+                        pstmt2.executeUpdate();    
+                        
+                        conn.close(); 
+                super.setToReturn();
+                
                
             }
             else {
+                
+               
+            
+                throw new Exception();
+            }
+            }
+            catch(Exception e) {    
                 System.out.println("Apartment " + super.getPropertyID() + " could not be returned.");
-                return false;}
+            }
   
          
         }
-        else {
-            System.out.println("Apartment " + super.getPropertyID() + " could not be returned.");
-            return false;
-        }        
-    }
+           
+   
 
  
     
-    public boolean performMaintenance() {
+    public void performMaintenance() {
         // ASSUME1: apartment maintenance is ONLY called on the current day.
         // ASSUME2: apartment rented even in future days will NOT allow maintenance.
-//        DateTime today = new DateTime();
-//        if (super.getStatus() == 2) {
-//            super.setStartMaintain(today);
-//            super.resetLastMaintainDate(today);
-//            
-//            System.out.println("Property " + super.getPropertyID() + " is under maintainance from today.");
-//            return true;
-//        }
-//        else if (super.getStatus() == 3){
-//            System.out.println("The property " + super.getPropertyID() + " has already been on maintenance.");
-//            return true;
-//        }
-//        else {
-//            System.out.println("The property has been rented and not available for maintenance."); 
-//            return false;
-//        }
-//        
-        return true;
+        LocalDate today = LocalDate.now();
+        
+            super.setStartMaintain(today);
+            super.resetLastMaintainDate(today);
+            
+            System.out.println("Property " + super.getPropertyID() + " is under maintainance from today.");
+            Connection conn = null;
+            try {
+            // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql1 = "UPDATE Property SET lastMaitaindDate = ? , "
+                        + "startMaintenance = ? "
+                      
+                        + "WHERE propertyID = ?";
+            Statement stmt1  = conn.createStatement();                     
+            PreparedStatement pstmt1 = conn.prepareStatement(sql1);
+                pstmt1.setString(1, super.getLastMaintainDate().format(getDateFormat()));
+                pstmt1.setString(2, super.getStartMaintainDate().format(getDateFormat()));
+                pstmt1.setString(3, super.getPropertyID());
+              
+                pstmt1.executeUpdate();
+             
+                
+                conn.close();
+                
+                
+            }
+            catch(SQLException sql) {
+                System.out.println("Maintenance EROR");
+            }
+        
+        
         //this method will return true if the property is now under maintenance.
         
         
     }
 
    
-    public boolean completeMaintenance(DateTime completionDate) {
+    public void completeMaintenance(LocalDate completionDate) {
         int diff = 1;
      
-//        diff = DateTime.diffDays(completionDate, super.getStartMaintainDate());
-//        
-//        //Maintenance can be set to completed on the same day of last maintenance date.
-//        if (super.getStatus() == 3 && diff > -2) {
-//            
-//            super.setLastMaintainDate(completionDate);
-//            System.out.println(super.getPropertyID() + " has all maintenance completed and ready for rent." );
-//            return true;
-//            
-//        }
-//        else {
-//            System.out.println("Invalid. Cannot complete maintenance for the property." );
-//            return false;
-//        }
-        return true;
+        diff = completionDate.compareTo(super.getStartMaintainDate());
+        
+        //Maintenance can be set to completed on the same day of last maintenance date.
+        try {
+        if (diff >= 0) {
+            
+            super.setLastMaintainDate(completionDate);
+            System.out.println(super.getPropertyID() + " has all maintenance completed and ready for rent." );
+            
+            Connection conn = null;
+            
+         // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql1 = "UPDATE Property SET lastMaitaindDate = ? "                     
+                        + "WHERE propertyID = ?";
+            Statement stmt1  = conn.createStatement();                     
+            PreparedStatement pstmt1 = conn.prepareStatement(sql1);
+                pstmt1.setString(1, super.getLastMaintainDate().format(getDateFormat()));
+                pstmt1.setString(2, super.getPropertyID());             
+                pstmt1.executeUpdate();            
+
+                conn.close();
+        
+            
+        }
+        else {
+            
+            throw new Exception();
+        }
+        }
+        catch(Exception e4) {
+            System.out.println("Invalid. Cannot complete maintenance for the property." );
+        }
+        
         
     }
     
@@ -217,25 +331,26 @@ public class Apartment extends Property {
                     "Bedroom:        "  + super.getBedNum() + "\n" +
                     "Status:      " + super.convertStatus(super.getStatus()) + "\n";
         
-        if (super.records[0] == null) {
+        if (super.records.get(0) == null) {
             s2 = "RENTAL RECORD:  empty" + "\n" +
                  "----------------------------------";
             return s1 + s2;
         }
-        else if(super.records[0].getActualReturnDate() == null) {
-            s4 = "Record ID:             " + super.records[0].getRecordID() + "\n" +
-                 "Rent Date:             " + super.records[0].getRentDate().getFormattedDate() + "\n" +
-                 "Estimated Return Date: " + super.records[0].getEstimatedReturnDate().getFormattedDate() + "\n" +
+        else if(super.records.get(0).getActualReturnDate() == null) {
+         
+            s4 = "Record ID:             " + super.records.get(0).getRecordID() + "\n" +
+                 "Rent Date:             " + super.records.get(0).getRentDate().format(getDateFormat()) + "\n" +
+                 "Estimated Return Date: " + super.records.get(0).getEstimatedReturnDate().format(getDateFormat()) + "\n" +
                     "----------------------------------";
-            for (int i= 1; i<10; i++ ) {
-                if(super.records[i]== null) break;
+            for (int i= 1; i<super.getRecords().size(); i++ ) {
+                if(super.records.get(i)== null) break;
                 s4 = s4 +  "\n" +
-                     "Record ID:             " + super.records[i].getRecordID() + "\n" +
-                     "Rent Date:             " + super.records[i].getRentDate().getFormattedDate() + "\n" +
-                     "Estimated Return Date: " + super.records[i].getEstimatedReturnDate() + "\n" +
-                     "Actual Return Date:    " + super.records[i].getActualReturnDate() + "\n" +
-                     "Rental Fee:            " + super.records[i].getRentalFee() + "\n" +
-                     "Late Fee:              " + super.records[i].getLateFee() + "\n" +
+                     "Record ID:             " + super.records.get(i).getRecordID() + "\n" +
+                     "Rent Date:             " + super.records.get(i).getRentDate().format(getDateFormat()) + "\n" +
+                     "Estimated Return Date: " + super.records.get(i).getEstimatedReturnDate() + "\n" +
+                     "Actual Return Date:    " + super.records.get(i).getActualReturnDate() + "\n" +
+                     "Rental Fee:            " + super.records.get(i).getRentalFee() + "\n" +
+                     "Late Fee:              " + super.records.get(i).getLateFee() + "\n" +
                      "----------------------------------";
                      
            }
@@ -243,15 +358,15 @@ public class Apartment extends Property {
        }
         
        else {
-            for (int i= 0; i<10; i++ ) {
-                if(super.records[i]== null) break;
+            for (int i= 0; i<super.getRecords().size(); i++ ) {
+                if(super.records.get(i)== null) break;
                 s4 = s4 +  "\n" +
-                     "Record ID:             " + super.records[i].getRecordID() + "\n" +
-                     "Rent Date:             " + super.records[i].getRentDate().getFormattedDate() + "\n" +
-                     "Estimated Return Date: " + super.records[i].getEstimatedReturnDate() + "\n" +
-                     "Actual Return Date:    " + super.records[i].getActualReturnDate() + "\n" +
-                     "Rental Fee:            " + super.records[i].getRentalFee() + "\n" +
-                     "Late Fee:              " + super.records[i].getLateFee() +
+                     "Record ID:             " + super.records.get(i).getRecordID() + "\n" +
+                     "Rent Date:             " + super.records.get(i).getRentDate().format(getDateFormat()) + "\n" +
+                     "Estimated Return Date: " + super.records.get(i).getEstimatedReturnDate() + "\n" +
+                     "Actual Return Date:    " + super.records.get(i).getActualReturnDate() + "\n" +
+                     "Rental Fee:            " + super.records.get(i).getRentalFee() + "\n" +
+                     "Late Fee:              " + super.records.get(i).getLateFee() +
                      "----------------------------------";;
             }
             return s1 + s3 + s4;

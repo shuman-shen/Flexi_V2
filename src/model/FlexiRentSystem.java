@@ -41,6 +41,10 @@ public class FlexiRentSystem {
     public FlexiRentSystem() {
         getMainList();
         getAllSuburbs();
+        
+        for(Property pp : properties) {
+            pp.getAllRecords();
+        }
         //filteredList = new ArrayList<Property>(properties);
     }
     

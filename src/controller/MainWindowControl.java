@@ -39,6 +39,29 @@ public class MainWindowControl {
         return flexiModel.getSuburbList();
     }
     
+    
+    public void rent(String propertyID, String customerId, LocalDate rentDate, int numOfRentDay) {
+        flexiModel.setFilterList(propertyID);
+        flexiModel.getFilteredList().get(0).rent(customerId, rentDate, numOfRentDay);
+    }
+    
+    public void returnProperty(String propertyID, LocalDate returnDate) {
+        flexiModel.setFilterList(propertyID);
+        flexiModel.getFilteredList().get(0).returnProperty(returnDate);
+    }
+    
+    public void performMaintenance(String propertyID) {
+        flexiModel.setFilterList(propertyID);
+        flexiModel.getFilteredList().get(0).performMaintenance();
+    }
+    
+    public void completeMaintenance(String propertyID, LocalDate completionDate) {
+        flexiModel.setFilterList(propertyID);
+        flexiModel.getFilteredList().get(0).completeMaintenance(completionDate);
+    }
+    
+    
+    
    
 //   public Collection<Property> getCollection(){
 //       return flexiModel.getCollection();

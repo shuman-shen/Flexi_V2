@@ -66,7 +66,7 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
     private Button endBtn;
     private DatePicker datePicker;
     private ComboBox<Integer> lengthBox;
-    //private ComboBox<Integer> lengthBox2;
+    private ComboBox<Integer> lengthBoxP;
     private VBox dBox;
     
     private ArrayList<Property> tmp;
@@ -75,6 +75,7 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
     private final String path = "/view/images/";
     final private String pathN = "/view/images/No_Image_Available.png";
     private LocalDate rentDate;
+    private LocalDate returnDate;
     private int duration;
     private int dayOfWeek;
     private String customerID;
@@ -165,18 +166,8 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
         rentBtn.setOnAction(rent ->{
             
             try {
-            int s = 0;
-            mainControl.setFilter(pID);
-                    
-            curItm = mainControl.getFilteredList().get(0);
-            s = curItm.getStatus();
-                    
-            if (status != s) {
-                status = s;
-                setButtons();
-                throw new Exception();
-            }
             
+            checkStatus();
             Dialog<Data> dialog = new Dialog<>();
             dialog.setTitle("Rent Property");
             dialog.setHeaderText(null);
@@ -189,24 +180,44 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
             cId.textProperty().addListener((observable, oldValue, newValue) -> {
                 okButton.setDisable(newValue.trim().isEmpty());
             });
+//            datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+//                okButton.setDisable(oldValue.toString().trim().isEmpty()||newValue.toString().trim().isEmpty());
+//            });
             
             
             Label date = new Label("Check-in Date");
             datePicker = new DatePicker(LocalDate.now());
-            datePicker.setDayCellFactory(picker -> new DateCell() {
-                @Override
-                public void updateItem(LocalDate date, boolean empty) {
-                    super.updateItem(date, empty);
-                    setDisable(empty || date.compareTo(LocalDate.now())<0);
-                }
-            });
+//            datePicker.setDayCellFactory(picker -> new DateCell() {
+//                @Override
+//                public void updateItem(LocalDate date, boolean empty) {
+//                    super.updateItem(date, empty);
+//                    setDisable(empty || date.compareTo(LocalDate.now())<0);
+//                }
+//            });
             datePicker.setEditable(false);
             Label length = new Label("Staying Length");
             lengthBox = new ComboBox<>();
-            for (int i = 2; i<29; i++) {
-                lengthBox.getItems().add(i);
-            } 
-            lengthBox.setValue(2);
+            
+            int c = 2;
+            int l = 29;
+            dayOfWeek = datePicker.getValue().getDayOfWeek().getValue();
+            
+            if(curItm.getPropertyID().startsWith("S")) {
+                c = 1;
+                l = 11;
+            }
+            else if (dayOfWeek==5 || dayOfWeek == 6 ) {
+                c =3;
+            }
+                for (int i = c; i<l; i++) {
+                    lengthBox.getItems().add(i);
+                } 
+                lengthBox.setValue(c);
+            
+            
+            
+            
+            //lengthBoxP = new ComboBox<>();
             
             
             dBox = new VBox(10);
@@ -219,27 +230,25 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
                         LocalDate newValue) {
                     // TODO Auto-generated method stub
                     
-                    dayOfWeek = datePicker.getValue().getDayOfWeek().getValue();
+                    //dayOfWeek = datePicker.getValue().getDayOfWeek().getValue();
+                    int j = 2;
                     
-                    if(dayOfWeek<=7 && dayOfWeek >=4) {
-                        lengthBox = new ComboBox<>();
-                        for (int i = 2; i<29; i++) {
-                            lengthBox.getItems().add(i);
-                        } 
-                        lengthBox.setValue(2);
-                          dBox.getChildren().set(5, lengthBox);                
-                    
+                    if(curItm.getPropertyID().startsWith("A")) {
+                    if(dayOfWeek==5 && dayOfWeek ==6 ) {
+                        j = 3;
                     }
                     else {
+                        j = 2;
+                    }
                         
                         lengthBox = new ComboBox<>();
-                        for (int i = 3; i<29; i++) {
+                        for (int i = j; i<29; i++) {
                             lengthBox.getItems().add(i);
                         } 
-                        lengthBox.setValue(3);
+                        lengthBox.setValue(j);
                         dBox.getChildren().set(5, lengthBox);
-                    }                                                              
-                }
+                    } }                                                              
+                
                                                    
             });
             
@@ -265,8 +274,13 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
                     this.duration = data.duration;
                     
                     try {
-                        // Controller
-                        final String msg = "rented";
+                        mainControl.rent(pID, customerID, rentDate, duration);
+                        
+                        
+                        status = 1;
+                        setButtons();
+                        //curItm.setToRent();
+                        final String msg = "been rented";
                         doneAlert(msg, pID);
                         
                         
@@ -294,12 +308,89 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
         
         returnBtn = new Button("Return Property");
         btnGrid.add(returnBtn,1,0);
-        
-      
-        
         returnBtn.setOnAction(returnEvent ->{
-            
-            //operateDate send to controller
+                
+               //try {
+//                int s = 0;
+//                mainControl.setFilter(pID);
+//                        
+//                curItm = mainControl.getFilteredList().get(0);
+//                s = curItm.getStatus();
+//                        
+//                if (status != s) {
+//                    status = s;
+//                    setButtons();
+//                    throw new Exception();
+//                }
+                   
+                //checkStatus();
+                
+                Dialog<LocalDate> dialog = new Dialog<>();
+                dialog.setTitle("Return Property");
+                dialog.setHeaderText(null);
+                //DialogPane dialogPane = dialog.getDialogPane();
+                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+           
+                
+               //validation for empty date
+                
+                Label date = new Label("Return Date");
+                datePicker = new DatePicker(LocalDate.now());
+                datePicker.setEditable(false);
+                
+                VBox rBox = new VBox(10);
+                rBox.getChildren().setAll(date, datePicker);
+                
+                
+                dialog.getDialogPane().setContent(rBox);
+                //Platform.runLater(textField::requestFocus);               
+                //System.out.println("here ");
+                
+                Optional<LocalDate> request2 = dialog.showAndWait();
+                System.out.println("here1");
+                
+                dialog.setResultConverter((ButtonType button) -> {
+                    if (button == ButtonType.OK) {                  
+                        System.out.println("here2");
+                        returnDate = datePicker.getValue();
+                        System.out.println("here2");
+                        return returnDate;               
+
+                      }                    
+     
+                      
+                    else return null;
+                });
+                
+                if(request2.isPresent()){
+                        System.out.println("there");
+                        returnDate = datePicker.getValue();
+                        System.out.println("return " + returnDate);
+                        System.out.println(curItm.getRecords().get(0).getRecordID());
+                        
+                        
+                        //try {
+                            mainControl.returnProperty(pID, returnDate);
+                            status = 2;
+                            setButtons();
+                            final String msg = "been returned";
+                            doneAlert(msg, pID);
+                            
+                            
+//                        }
+//                        catch(Exception sql) {
+//                            System.out.println("error here");
+//                            //throw sql;
+//                        }
+                        
+                }
+//                
+//                }
+//                
+//                catch(Exception returnEx) {
+//                    //errorAlert();
+//                    System.out.println(returnEx.getMessage());
+//                }
             
         });
         
@@ -307,12 +398,48 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
         
         startBtn = new Button("Start Maintenance");
         btnGrid.add(startBtn,0,1);
-      
+        
+        startBtn.setOnAction(start ->{
+            
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Please confirm...");
+            alert.setHeaderText(null);
+            alert.setContentText("Do you want to start maitenance?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                status = 3;
+                setButtons();
+                final String msg = "been under maitenance since today";
+                doneAlert(msg, pID);
+            } 
+            
+            
+        });
         
         
         endBtn = new Button("Finish Maintenance");
         btnGrid.add(endBtn,1,1);
        
+        
+startBtn.setOnAction(start ->{
+            
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Please confirm...");
+            alert.setHeaderText(null);
+            alert.setContentText("Do you want to complete maitenance?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                status = 3;
+                setButtons();
+                final String msg = "completed maintenance";
+                doneAlert(msg, pID);
+            } 
+            
+            
+        });
+        
         
         Text desc = new Text(curItm.getDescription());
         desc.setWrappingWidth(400);
@@ -421,7 +548,7 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
     public void doneAlert(String msg, String pID) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setHeaderText("Done.");
-        alert.setContentText("Property " + pID + " is successfully " + msg +".");
+        alert.setContentText("Property " + pID + " has successfully " + msg +".");
         alert.showAndWait();
         
     }
@@ -453,6 +580,23 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
             returnBtn.setDisable(true);
             startBtn.setDisable(true);
             endBtn.setDisable(false);
+        }
+    }
+    
+    public void checkStatus() throws Exception{
+        int s = 0;
+        mainControl.setFilter(pID);
+                
+        curItm = mainControl.getFilteredList().get(0);
+        s = curItm.getStatus();
+        System.out.print("current status in database: " + s);
+        System.out.print("current status in object: " + status);
+                
+        if (status != s) {
+            status = s;
+            setButtons();
+            System.out.print("Not match");
+            throw new Exception();
         }
     }
     

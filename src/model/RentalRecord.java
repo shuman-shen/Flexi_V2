@@ -11,7 +11,7 @@ public class RentalRecord {
     private LocalDate estimatedReturnDate;
     private LocalDate actualReturnDate;
     private double rentalFee;
-    private double lateFee;
+    private double lateFee = 0;
 
     
     DecimalFormat df2 = new DecimalFormat(".##");
@@ -57,7 +57,12 @@ public class RentalRecord {
     }
     
     
-    
+    public void setRentalFee(double rentalFee) {
+        this.rentalFee = rentalFee;
+    }
+    public void setLateFee(double lateFee) {
+        this.lateFee = lateFee;
+    }
     public void setActualReturnDate(LocalDate actual) {
         actualReturnDate = actual;
         
