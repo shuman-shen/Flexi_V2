@@ -47,7 +47,8 @@ public class Apartment extends Property {
              
             String shortFormattedDate = estimatedReturnDate.format(super.getShortDateFormat());
             String formattedEstDate = estimatedReturnDate.format(super.getDateFormat());
-           
+            String formattedRentDate = estimatedReturnDate.format(super.getDateFormat());
+            String pID = super.getPropertyID();
             
             recordID = super.getPropertyID() + "_"+ customerId + "_" + shortFormattedDate;
             
@@ -61,13 +62,13 @@ public class Apartment extends Property {
                 //System.out.println("Connection to SQLite has been established.");
                 
                 String sql1 = "INSERT INTO RentalRecord (recordID, propertyID, customerID, rentDate, estimatedReturnDate) "
-                        + "VALUES(?,?,?,?)";
+                        + "VALUES(?,?,?,?,?)";
                 Statement stmt1  = conn.createStatement();                     
                 PreparedStatement pstmt1 = conn.prepareStatement(sql1);
                     pstmt1.setString(1, recordID);
-                    pstmt1.setString(2, super.getPropertyID());
+                    pstmt1.setString(2, pID);
                     pstmt1.setString(3, customerId);
-                    pstmt1.setString(4, rentDate.format(getDateFormat()));
+                    pstmt1.setString(4, formattedRentDate);
                     pstmt1.setString(5, formattedEstDate);                   
                     pstmt1.executeUpdate();
                     
@@ -130,7 +131,7 @@ public class Apartment extends Property {
         
         
         //ascending order
-        RentalRecord rec = super.records.get(0);
+        RentalRecord rec = super.getRecords().get(0);
         
         actualDiff = returnDate.compareTo(rec.getRentDate());
         estimateDiff = rec.getEstimatedReturnDate().compareTo(rec.getRentDate());
@@ -331,26 +332,26 @@ public class Apartment extends Property {
                     "Bedroom:        "  + super.getBedNum() + "\n" +
                     "Status:      " + super.convertStatus(super.getStatus()) + "\n";
         
-        if (super.records.get(0) == null) {
+        if (super.getRecords().get(0) == null) {
             s2 = "RENTAL RECORD:  empty" + "\n" +
                  "----------------------------------";
             return s1 + s2;
         }
-        else if(super.records.get(0).getActualReturnDate() == null) {
+        else if(super.getRecords().get(0).getActualReturnDate() == null) {
          
-            s4 = "Record ID:             " + super.records.get(0).getRecordID() + "\n" +
-                 "Rent Date:             " + super.records.get(0).getRentDate().format(getDateFormat()) + "\n" +
-                 "Estimated Return Date: " + super.records.get(0).getEstimatedReturnDate().format(getDateFormat()) + "\n" +
+            s4 = "Record ID:             " + super.getRecords().get(0).getRecordID() + "\n" +
+                 "Rent Date:             " + super.getRecords().get(0).getRentDate().format(getDateFormat()) + "\n" +
+                 "Estimated Return Date: " + super.getRecords().get(0).getEstimatedReturnDate().format(getDateFormat()) + "\n" +
                     "----------------------------------";
             for (int i= 1; i<super.getRecords().size(); i++ ) {
-                if(super.records.get(i)== null) break;
+                if(super.getRecords().get(i)== null) break;
                 s4 = s4 +  "\n" +
-                     "Record ID:             " + super.records.get(i).getRecordID() + "\n" +
-                     "Rent Date:             " + super.records.get(i).getRentDate().format(getDateFormat()) + "\n" +
-                     "Estimated Return Date: " + super.records.get(i).getEstimatedReturnDate() + "\n" +
-                     "Actual Return Date:    " + super.records.get(i).getActualReturnDate() + "\n" +
-                     "Rental Fee:            " + super.records.get(i).getRentalFee() + "\n" +
-                     "Late Fee:              " + super.records.get(i).getLateFee() + "\n" +
+                     "Record ID:             " + super.getRecords().get(i).getRecordID() + "\n" +
+                     "Rent Date:             " + super.getRecords().get(i).getRentDate().format(getDateFormat()) + "\n" +
+                     "Estimated Return Date: " + super.getRecords().get(i).getEstimatedReturnDate() + "\n" +
+                     "Actual Return Date:    " + super.getRecords().get(i).getActualReturnDate() + "\n" +
+                     "Rental Fee:            " + super.getRecords().get(i).getRentalFee() + "\n" +
+                     "Late Fee:              " + super.getRecords().get(i).getLateFee() + "\n" +
                      "----------------------------------";
                      
            }
@@ -359,14 +360,14 @@ public class Apartment extends Property {
         
        else {
             for (int i= 0; i<super.getRecords().size(); i++ ) {
-                if(super.records.get(i)== null) break;
+                if(super.getRecords().get(i)== null) break;
                 s4 = s4 +  "\n" +
-                     "Record ID:             " + super.records.get(i).getRecordID() + "\n" +
-                     "Rent Date:             " + super.records.get(i).getRentDate().format(getDateFormat()) + "\n" +
-                     "Estimated Return Date: " + super.records.get(i).getEstimatedReturnDate() + "\n" +
-                     "Actual Return Date:    " + super.records.get(i).getActualReturnDate() + "\n" +
-                     "Rental Fee:            " + super.records.get(i).getRentalFee() + "\n" +
-                     "Late Fee:              " + super.records.get(i).getLateFee() +
+                     "Record ID:             " + super.getRecords().get(i).getRecordID() + "\n" +
+                     "Rent Date:             " + super.getRecords().get(i).getRentDate().format(getDateFormat()) + "\n" +
+                     "Estimated Return Date: " + super.getRecords().get(i).getEstimatedReturnDate() + "\n" +
+                     "Actual Return Date:    " + super.getRecords().get(i).getActualReturnDate() + "\n" +
+                     "Rental Fee:            " + super.getRecords().get(i).getRentalFee() + "\n" +
+                     "Late Fee:              " + super.getRecords().get(i).getLateFee() +
                      "----------------------------------";;
             }
             return s1 + s3 + s4;

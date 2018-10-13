@@ -366,7 +366,7 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
                         System.out.println("there");
                         returnDate = datePicker.getValue();
                         System.out.println("return " + returnDate);
-                        System.out.println(curItm.getRecords().get(0).getRecordID());
+                        System.out.println(curItm.getRecords().size());
                         
                         
                         //try {

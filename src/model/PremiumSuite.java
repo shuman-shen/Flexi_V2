@@ -76,7 +76,7 @@ public class PremiumSuite extends Property{
                 //System.out.println("Connection to SQLite has been established.");
                 
                 String sql1 = "INSERT INTO RentalRecords (recordID, propertyID, customerID, estimatedReturnDate) "
-                        + "VALUES(?,?,?,?)";
+                        + "VALUES(?,?,?,?,?)";
                 Statement stmt1  = conn.createStatement();                     
                 PreparedStatement pstmt1 = conn.prepareStatement(sql1);
                     pstmt1.setString(1, recordID);

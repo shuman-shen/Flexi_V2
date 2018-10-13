@@ -42,9 +42,8 @@ public class FlexiRentSystem {
         getMainList();
         getAllSuburbs();
         
-        for(Property pp : properties) {
-            pp.getAllRecords();
-        }
+        
+        //System.out.println("Tryyyyyyyyyyyyyyyyyyyyy " +properties.get(7).getPropertyID());
         //filteredList = new ArrayList<Property>(properties);
     }
     
@@ -443,6 +442,12 @@ public class FlexiRentSystem {
            
            }
            conn.close();
+           
+           
+           for(Property pp : properties) {
+               pp.getAllRecords();
+           }
+           
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } 
