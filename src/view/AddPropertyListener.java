@@ -160,7 +160,7 @@ public class AddPropertyListener implements EventHandler<ActionEvent> {
                 setDisable(empty || date.compareTo(LocalDate.now())>0);
             }
         });
-        //lastMaintenance.setEditable(false);
+        lastMaintenance.setEditable(false);
         
         root.add(disableLabel, 1, 7);
         

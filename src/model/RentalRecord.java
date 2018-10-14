@@ -2,6 +2,7 @@ package model;
 import utilities.DateTime;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class RentalRecord {
     //private Property property;    
@@ -12,7 +13,7 @@ public class RentalRecord {
     private LocalDate actualReturnDate;
     private double rentalFee;
     private double lateFee = 0;
-
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     
     DecimalFormat df2 = new DecimalFormat(".##");
     
@@ -88,13 +89,14 @@ public class RentalRecord {
         
         //recordId:rentDate:estimatedReturnDate:actualReturnDate:rentalFee:lateFee
         
-//        if(actualReturnDate == null) {
-//            return recordID+":"+rentDate+":"+estimatedReturnDate+":"+"none"+""+":"+"none"+":"+"none";
-//        }
-//        else {
-//            return recordID+":"+rentDate+":"+estimatedReturnDate.getFormattedDate()+":"+actualReturnDate.getFormattedDate()+":"+df2.format(rentalFee)+":"+df2.format(lateFee);
-//        }
-        return null;
+        if(actualReturnDate == null) {
+            return recordID+":"+rentDate+":"+estimatedReturnDate+":"+"none"+""+":"+"none"+":"+"none\n";
+        }
+        else {
+            return recordID+":"+rentDate+":"+estimatedReturnDate.format(formatter)+":"
+        +actualReturnDate.format(formatter)+":"+df2.format(rentalFee)+":"+df2.format(lateFee) +"\n";
+        }
+       
    }
     
     

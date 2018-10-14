@@ -47,7 +47,7 @@ public class Apartment extends Property {
              
             String shortFormattedDate = estimatedReturnDate.format(super.getShortDateFormat());
             String formattedEstDate = estimatedReturnDate.format(super.getDateFormat());
-            String formattedRentDate = estimatedReturnDate.format(super.getDateFormat());
+            String formattedRentDate = rentDate.format(super.getDateFormat());
             String pID = super.getPropertyID();
             
             recordID = super.getPropertyID() + "_"+ customerId + "_" + shortFormattedDate;
@@ -314,7 +314,8 @@ public class Apartment extends Property {
         String str =
         super.getPropertyID() + ":" + super.getStreetNo() + ":" 
         + super.getStreetName() + ":" + super.getSuburb() + ":" 
-        + getType() + ":" + super.getBedNum() + ":" + super.convertStatus(super.getStatus());
+        + getType() + ":" + super.getBedNum() + ":" + super.convertStatus(super.getStatus()) + ":"
+        + super.getImage() + ":" + super.getDescription() + "\n";
         
         return str;
     }

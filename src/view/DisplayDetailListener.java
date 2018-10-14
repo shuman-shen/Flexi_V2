@@ -273,6 +273,8 @@ public class DisplayDetailListener implements EventHandler<ActionEvent> {
                     rentDate = data.checkInDate;
                     this.duration = data.duration;
                     
+                    System.out.println("Checkin dATE" + rentDate) ;
+                    
                     try {
                         mainControl.rent(pID, customerID, rentDate, duration);
                         

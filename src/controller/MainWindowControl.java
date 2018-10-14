@@ -1,9 +1,13 @@
 package controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Scanner;
 
 import javafx.application.Application;
 import model.*;
@@ -14,6 +18,8 @@ public class MainWindowControl {
   
     private FlexiRentSystem flexiModel;
     private LocalDate today;
+    //private ArrayList<String> items;
+    private Property property;
     
     public MainWindowControl(FlexiRentSystem f) {
         flexiModel = f;
@@ -58,6 +64,141 @@ public class MainWindowControl {
     public void completeMaintenance(String propertyID, LocalDate completionDate) {
         flexiModel.setFilterList(propertyID);
         flexiModel.getFilteredList().get(0).completeMaintenance(completionDate);
+    }
+    
+    
+    public void exportData(String input) {
+        // TODO Auto-generated method stub
+File file1 = new File(input);
+        
+        try {
+            PrintWriter pw = new PrintWriter(file1);
+            
+            for(Property p : flexiModel.getPropertyList()) {
+                System.out.println(p.toString());
+                
+                pw.write(p.toString());
+                
+                
+                if(p.getRecords().size()>0) {
+                    
+                    for(RentalRecord r : p.getRecords()) {
+                        
+                        System.out.println(r.toString());
+                        pw.write(r.toString());
+                    }
+                    
+                }              
+            }
+           
+            pw.close(); //don't forget this method 
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }  
+        
+        
+        
+        
+        
+        
+    }
+    
+    public void importData(String input) {
+        
+        File file1 = new File(input);
+        
+        //items = new ArrayList<String>();
+        
+        try (Scanner in = new Scanner(file1)) {
+            
+            String lastMaintenance = "none";
+            String image = "none";
+            String desc = "none";
+            
+            
+            while(in.hasNextLine()) {
+                String line = in.nextLine();
+                String[] items = line.split(":");
+                
+                for(String k : items) {
+                    System.out.println(k);
+                }
+                
+                
+                
+                if(items.length >= 9) {
+                    String pID = items[0];
+                    int streetNum = Integer.parseInt(items[1]);
+                    String streetName = items[2];
+                    String suburb = items[3];
+                    int bedNum = Integer.parseInt(items[5]);
+                    String st = items[6];
+                    int status = convertStatus(st);
+                    
+                    
+                    if(items[4].startsWith("P")) {
+                        lastMaintenance = items[7];
+                        image = items[8];
+                        desc = items[9];
+                        
+                        System.out.println("PREM: " + lastMaintenance );
+                        
+                    }
+                    else {
+                        image = items[7];
+                        desc = items[8];
+                    }
+                        
+                    flexiModel.importData(pID, streetNum, streetName, suburb, bedNum, lastMaintenance, status, image, desc);
+                    
+                    flexiModel.setFilterList(pID);
+                    property = flexiModel.getFilteredList().get(0);
+                
+                
+                }
+                    
+                  else { 
+                      
+                      String rID = items[0];
+                     
+                      String[] c = rID.split("_");
+                      String cID = "C_"+ c[3];
+                      
+                      String rent = items[1];
+                      String estDate = items[2];
+                      String actualDate = items[3];
+                      String fee =items[4];
+                      String lateFee =items[5];
+                      //double fee = Double.parseDouble(items[4]);
+                      //double lateFee = Double.parseDouble(items[5]);
+                      
+                      
+                      
+                      property.insertNewRecord(property.getPropertyID(), rID, cID, rent, 
+                              estDate, actualDate, fee, lateFee);
+                      
+                      //flexiModel.getMainList();
+                     
+                    
+                    
+                    
+                }
+                
+                
+                
+                
+                //System.out.println(in.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } 
+            catch(Exception other) {
+                System.out.println(other.getMessage());
+            }
+        
+        
+        
+        
     }
     
     
@@ -165,6 +306,22 @@ public class MainWindowControl {
     public boolean setFilter(String propertyID) {
         return flexiModel.setFilterList(propertyID);
     }
+
+
+   public int convertStatus(String st) {
+       int i = 0;
+       
+       if(st.startsWith("A")) {
+           i = 2;
+       }
+       else if (st.startsWith("U")) {
+           i = 3;
+       }
+       else i =1;
+       
+       return i;
+           
+   }
     
     
         

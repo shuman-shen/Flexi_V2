@@ -1,6 +1,7 @@
 package model;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -226,7 +227,73 @@ public abstract class Property {
         }             
    
     
-    
+        public void insertNewRecord(String propertyID, String recordID, String customerID, String rentDate, 
+                String estimatedReturnDate, String actualReturn, String rentalFee, String lateFee) {
+            records = new ArrayList<RentalRecord>();
+            Connection conn = null;
+            
+            try {
+                // db parameters
+                String url = "jdbc:sqlite:src/database/FlexiData.db";
+                // create a connection to the database
+                conn = DriverManager.getConnection(url);
+                
+                //System.out.println("Connection to SQLite has been established.");
+                
+                String sql = "INSERT INTO RentalRecord (recordID, propertyID, customerID, rentDate, estimatedReturnDate) "
+                        + "VALUES(?,?,?,?,?)";
+                
+                System.out.println(sql);
+                Statement stmt  = conn.createStatement();                     
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, recordID);
+                    pstmt.setString(2, propertyID);
+                    pstmt.setString(3, customerID);
+                    pstmt.setString(4, rentDate);
+                    pstmt.setString (5, estimatedReturnDate);                 
+                    pstmt.executeUpdate();             
+                   
+               record = new RentalRecord(recordID, customerID, 
+                       LocalDate.parse(rentDate, formatter), 
+                       LocalDate.parse(estimatedReturnDate, formatter));
+               
+               if(actualReturn.equals("none")) {
+                   
+                   
+                   String sql1 = "UPDATE RentalRecord SET actualReturnDate = ? , "
+                           + "rentalFee = ? , "
+                           + "lateFee = ? "
+                           + "WHERE recordId = ?";
+                   Statement stmt1  = conn.createStatement();                     
+                   PreparedStatement pstmt1 = conn.prepareStatement(sql1);
+                   pstmt1.setString(1, actualReturn);
+                   pstmt1.setDouble(2, Double.parseDouble(rentalFee));
+                   pstmt1.setDouble(3, Double.parseDouble(lateFee));
+                   pstmt1.setString(4, recordID);    
+                   pstmt1.executeUpdate();
+                   
+                   
+                   record.setActualReturnDate(LocalDate.parse(actualReturn, formatter));
+                   record.setRentalFee(Double.parseDouble(rentalFee));
+                   record.setLateFee(Double.parseDouble(lateFee));
+               }
+               
+               
+               conn.close();
+               
+               
+               }
+              
+               
+      
+               catch (SQLException ex) {
+                   // System.out.println(ex.getMessage());
+                }
+                
+              
+            
+            
+        }
          
    
     

@@ -128,7 +128,7 @@ public class PremiumSuite extends Property{
         int lateDiff = 0;
         int estimateDiff = 2;
         
-        RentalRecord rec = super.records.get(0);
+        RentalRecord rec = super.getRecords().get(0);
         actualDiff = returnDate.compareTo(rec.getRentDate());
         estimateDiff = rec.getEstimatedReturnDate().compareTo(rec.getRentDate());
         lateDiff = returnDate.compareTo(rec.getEstimatedReturnDate());
@@ -296,14 +296,17 @@ public class PremiumSuite extends Property{
         
         //propertyId:streetNumber:streetName:suburb:propertyType:numOfBedRoom:status:lastMaintainDate
         
-//        String str =
-//        super.getPropertyID() + ":" + super.getStreetNo() + ":" 
-//        + super.getStreetName() + ":" + super.getSuburb() + ":" 
-//        + getType() + ":" + super.getBedNum() + ":"
-//        + super.convertStatus(super.getStatus()) + ":" + super.getLastMaintainDate().getFormattedDate();
-//        
-//        return str;
-        return null;
+            String str =
+            super.getPropertyID() + ":" + super.getStreetNo() + ":" 
+            + super.getStreetName() + ":" + super.getSuburb() + ":" 
+            + getType() + ":" + super.getBedNum() + ":"
+            + super.convertStatus(super.getStatus()) + ":" 
+            + super.getLastMaintainDate().format(getDateFormat()) + ":" 
+            + super.getImage() + ":"
+            + super.getDescription() +  "\n";
+            
+            return str;
+       
     }
     
     public String getDetails() {

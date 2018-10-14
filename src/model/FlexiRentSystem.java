@@ -36,7 +36,7 @@ public class FlexiRentSystem {
     private String description;
     private final String checkDate = "(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/((19|20)\\d\\d)";
     private ArrayList<String> suburbList;
-    
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     
     public FlexiRentSystem() {
         getMainList();
@@ -73,7 +73,7 @@ public class FlexiRentSystem {
     public String addApartment(int streetNo, String streetName, 
             String suburb, int bedNum, String image, String description) {
         
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        
         String today = LocalDate.now().format(formatter);
         
         generateID();
@@ -172,7 +172,7 @@ public class FlexiRentSystem {
                 
         }
             catch (SQLException e) {
-                System.out.println(e.getMessage());
+                //System.out.println(e.getMessage());
             }
        
         
@@ -472,9 +472,46 @@ public class FlexiRentSystem {
     }
        
         
- 
-
+    public void importData(String propertyID, int streetNo, String streetName, 
+            String suburb, int bedNum, String LastMaintenance,
+            int status, String image, String description){
+            
+            LocalDate day = LocalDate.now();
+            
+            if(propertyID.startsWith("A")) {
+                property = new Apartment(propertyID,streetNo, streetName, 
+                        suburb, bedNum, day, 
+                        status, image, description);
+            
+            }
+            else {
+                    System.out.println("Til this step1");
+                    day = LocalDate.parse(LastMaintenance, formatter);
+                    
+                    System.out.println("Til this step2");
+                    property = new PremiumSuite(propertyID, streetNo, streetName, 
+                            suburb, 3, day, 
+                            status, image, description);} 
+      
+            System.out.println("Til this step3" + property.getDescription());
+            
+            insertNew(propertyID, streetNo, streetName, 
+                    suburb, bedNum, day.format(formatter), 
+                    status, image, description);
+            
+            
+            System.out.println("Til this step4");
+            properties.add(property);
+            
+            
+            }
     
+}          
+   
         
-        
-}
+
+//    private insertRecords(String recordId, String rentDate) {
+//        
+//      //recordId:rentDate:estimatedReturnDate:actualReturnDate:rentalFee:lateFee
+//        
+//    }

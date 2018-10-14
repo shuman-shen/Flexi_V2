@@ -1,0 +1,67 @@
+A_5935JYGJ:68:Nicholson St:Fitzroy:Apartment:2:Available:A01.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_5935JYGJ_C_016_20052018:2018-05-20:24/05/2018:27/05/2018:840.0:724.5
+A_5935JYGJ_C_001_05052018:2018-05-05:11/05/2018:14/05/2018:1260.0:724.5
+A_5935JYGJ_C_031_04062018:2018-06-04:08/06/2018:08/06/2018:840.0:.0
+A_4426VATR:190:Harbour Esplanade:Docklands:Apartment:1:Available:A02.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_4426VATR_C_017_21052018:2018-05-21:28/05/2018:29/05/2018:1001.0:164.45
+A_4426VATR_C_002_06052018:2018-05-06:14/05/2018:16/05/2018:1144.0:328.9
+A_4426VATR_C_032_05062018:2018-06-05:10/06/2018:10/06/2018:715.0:.0
+A_4395FVBC:360:St Kilda Rd:Melbourne:Apartment:2:Available:A03.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_4395FVBC_C_018_22052018:2018-05-22:28/05/2018:28/05/2018:1260.0:.0
+A_4395FVBC_C_003_07052018:2018-05-07:11/05/2018:12/05/2018:840.0:241.5
+A_4395FVBC_C_033_06062018:2018-06-06:12/06/2018:13/06/2018:1260.0:241.5
+A_9413CPTP:270:High St:Prahran:Apartment:3:Available:A04.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_9413CPTP_C_019_23052018:2018-05-23:31/05/2018:31/05/2018:2552.0:.0
+A_9413CPTP_C_004_08052018:2018-05-08:17/05/2018:17/05/2018:2871.0:.0
+A_9413CPTP_C_034_07062018:2018-06-07:12/06/2018:14/06/2018:1595.0:733.7
+A_4793ELYS:1:Mount St:Prahran:Apartment:3:Available:A05.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_4793ELYS_C_020_24052018:2018-05-24:02/06/2018:05/06/2018:2871.0:1100.55
+A_4793ELYS_C_005_09052018:2018-05-09:16/05/2018:19/05/2018:2233.0:1100.55
+A_4793ELYS_C_035_08062018:2018-06-08:15/06/2018:18/06/2018:2233.0:1100.55
+A_0970FOBG:5:Queens Rd:Melbourne:Apartment:3:Available:A06.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_0970FOBG_C_021_25052018:2018-05-25:29/05/2018:31/05/2018:1276.0:733.7
+A_0970FOBG_C_006_10052018:2018-05-10:14/05/2018:18/05/2018:1276.0:1467.4
+A_0970FOBG_C_036_09062018:2018-06-09:15/06/2018:19/06/2018:1914.0:1467.4
+A_0137ENPE:32:Bay St:Brighton:Apartment:1:Available:A07.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_0137ENPE_C_022_26052018:2018-05-26:31/05/2018:31/05/2018:715.0:.0
+A_0137ENPE_C_007_11052018:2018-05-11:18/05/2018:23/05/2018:1001.0:822.25
+A_0137ENPE_C_037_10062018:2018-06-10:18/06/2018:19/06/2018:1144.0:164.45
+A_9437BIQT:3:Kingston Rd:Heatherton:Apartment:2:Available:A08.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_9437BIQT_C_023_27052018:2018-05-27:02/06/2018:02/06/2018:1260.0:.0
+A_9437BIQT_C_008_12052018:2018-05-12:16/05/2018:18/05/2018:840.0:483.0
+A_9437BIQT_C_038_11062018:2018-06-11:15/06/2018:17/06/2018:840.0:483.0
+A_7283DCXI:520:Collins St:Melbourne:Apartment:1:Available:A09.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_7283DCXI_C_024_28052018:2018-05-28:05/06/2018:07/06/2018:1144.0:328.9
+A_7283DCXI_C_009_13052018:2018-05-13:18/05/2018:19/05/2018:715.0:164.45
+A_7283DCXI_C_039_12062018:2018-06-12:17/06/2018:20/06/2018:715.0:493.35
+A_7445VATX:220:Collins St:Melbourne:Apartment:3:Available:A10.jpeg:Lorem ipsum dolor sit amet, simul ridens deserunt ad duo. Id sea essent ponderum phaedrum, amet suas propriae eam ea. Ea qui modo sumo scribentur, his omnium accusam cu. Per ne mnesarchum honestatis. Et nec congue mandamus splendide, sit recusabo forensibus no, elit minimum persequeris in eum. Ut vim illud cotidieque, dolorem appareat ut nec. Vel prima legimus recusabo te, pri odio soluta atomorum ut, eum voluptua democritum cu. Ut elit altera abhorreant mel, ad assum ocurreret percipitur vim. Iuvaret elaboraret te ius. Omnes regione noluisse ius in.
+A_7445VATX_C_025_29052018:2018-05-29:01/06/2018:02/06/2018:957.0:366.85
+A_7445VATX_C_010_14052018:2018-05-14:20/05/2018:20/05/2018:1914.0:.0
+A_7445VATX_C_040_13062018:2018-06-13:19/06/2018:21/06/2018:1914.0:733.7
+S_5821CAIX:10:Claremont St:South Yarra:Premium Suite:3:Available:01/05/2018
+S_5821CAIX_C_026_30052018:2018-05-30:03/06/2018:05/06/2018:2216.0:1324.0
+S_5821CAIX_C_011_15052018:2018-05-15:20/05/2018:23/05/2018:2770.0:1986.0
+S_1910OOUO:16:Fawkner St:South Yarra:Premium Suite:3:Available:01/05/2018
+S_1910OOUO_C_027_31052018:2018-05-31:06/06/2018:09/06/2018:3324.0:1986.0
+S_1910OOUO_C_012_16052018:2018-05-16:20/05/2018:22/05/2018:2216.0:1324.0
+S_4054BGKQ:116:Argyle St:Fitzroy:Premium Suite:3:Available:01/05/2018
+S_4054BGKQ_C_013_17052018:2018-05-17:20/05/2018:21/05/2018:1662.0:662.0
+S_4054BGKQ_C_028_01062018:2018-06-01:04/06/2018:08/06/2018:1662.0:2648.0
+S_8555NEOG:270:Mountjoy Parade:Lorne:Premium Suite:3:Available:01/05/2018
+S_8555NEOG_C_014_18052018:2018-05-18:23/05/2018:23/05/2018:2770.0:.0
+S_8555NEOG_C_029_02062018:2018-06-02:07/06/2018:10/06/2018:2770.0:1986.0
+S_2744ZTNA:289:Whitehorse Rd:Balwyn:Premium Suite:3:Available:01/05/2018
+S_2744ZTNA_C_015_19052018:2018-05-19:25/05/2018:27/05/2018:3324.0:1324.0
+S_2744ZTNA_C_030_03062018:2018-06-03:09/06/2018:10/06/2018:3324.0:662.0
+A_0880LHAZ:12:aaa:nnn:Apartment:1:Rented:No_Image_Available.png:hghghgj
+A_9915CHXS:1:3dfsf:sdfsdfasdfsaf:Apartment:2:Rented:No_Image_Available.png:dsfadsafd
+A_9571SCGR:33:sdfdf:sadgasdff:Apartment:1:Available:No_Image_Available.png:fasdgdfaaaasddddddddddddddddd
+A_9748JLYT:22:sdfs:asd:Apartment:1:Available:No_Image_Available.png:hghjfhjgjhgj
+A_9748JLYT_C_001_31102018:2018-10-31:31/10/2018:02/11/2018:.0:164.45
+A_9748JLYT_C_001_16102018:2018-10-16:16/10/2018:18/10/2018:.0:328.9
+A_9748JLYT_C_001_06102018:2018-10-06:2018-10-06:none:none:none
+A_4482OKYU:77:77:77:Apartment:1:Rented:No_Image_Available.png:77
+A_4482OKYU_C_001_03102018:2018-10-01:2018-10-03:none:none:none
+A_4482OKYU_C_001_16102018:2018-10-16:16/10/2018:17/10/2018:286.0:164.45
+S_2240IBQO:90:lkj:poi:Premium Suite:1:Available:01/10/2018
+S_0117WPSL:23:dfasdf:dsafdfasdf:Premium Suite:1:Available:02/10/2018

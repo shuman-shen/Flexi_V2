@@ -382,9 +382,12 @@ public class MainWindow{
       quitMenuItem.setOnAction(e -> Platform.exit());
       
       MenuItem importMenuItem = new MenuItem("Import Data");
-      //exitMenuItem.setOnAction(new MenuItemListener(exitMenuItem));
+      importMenuItem.setOnAction(new ImportListener(mainControl));
       
       MenuItem exportMenuItem = new MenuItem("Export Data");       
+      
+      exportMenuItem.setOnAction(new ExportListener(mainControl));
+      
       
       fileMenu.getItems().addAll(newMenuItem, rentMenuItem);
       dataMenu.getItems().addAll(importMenuItem, exportMenuItem);
