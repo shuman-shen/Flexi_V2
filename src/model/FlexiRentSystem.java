@@ -38,13 +38,11 @@ public class FlexiRentSystem {
     private ArrayList<String> suburbList;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     
-    public FlexiRentSystem() {
+    public FlexiRentSystem() throws Exception {
         getMainList();
         getAllSuburbs();
         
-        
-        //System.out.println("Tryyyyyyyyyyyyyyyyyyyyy " +properties.get(7).getPropertyID());
-        //filteredList = new ArrayList<Property>(properties);
+       
     }
     
     
@@ -71,7 +69,7 @@ public class FlexiRentSystem {
     }
     
     public String addApartment(int streetNo, String streetName, 
-            String suburb, int bedNum, String image, String description) {
+            String suburb, int bedNum, String image, String description) throws SQLException {
         
         
         String today = LocalDate.now().format(formatter);
@@ -89,7 +87,7 @@ public class FlexiRentSystem {
         }
            
    public String addPremiumSuite(int streetNo, String streetName, 
-           String suburb, LocalDate lastMaintainDate, String image, String description) {
+           String suburb, LocalDate lastMaintainDate, String image, String description) throws SQLException {
        
        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
        String formattedDate = lastMaintainDate.format(formatter);
@@ -142,7 +140,7 @@ public class FlexiRentSystem {
     
     public void insertNew(String ID, int streetNo, String streetName, 
             String suburb, int bedNum, String lastMaintainDate, 
-            int status, String image, String description) {
+            int status, String image, String description) throws SQLException {
         Connection conn = null;
         try {
             // db parameters
@@ -150,7 +148,7 @@ public class FlexiRentSystem {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
-            //System.out.println("Connection to SQLite has been established.");
+  
             
             String sql = "INSERT INTO Property (propertyID, streetNo, streetName, "
                     + "suburb, bedNum, lastMaintainDate, "
@@ -172,7 +170,7 @@ public class FlexiRentSystem {
                 
         }
             catch (SQLException e) {
-                //System.out.println(e.getMessage());
+                throw e;
             }
        
         
@@ -180,7 +178,7 @@ public class FlexiRentSystem {
     
     
     //Generate suburb list for displayed at MainWindow filter
-    public void getAllSuburbs() {
+    public void getAllSuburbs() throws SQLException {
         suburbList = new ArrayList<String>();
         String s;
         Connection conn = null;
@@ -202,34 +200,57 @@ public class FlexiRentSystem {
                if(!suburbList.contains(s))
                suburbList.add(s);
            }
-          //TODO TYPE NOT MATCH EXCEPTION                   
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-      
-        } finally {
-            try {
                 if (conn != null) {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                throw ex;
             }
         } 
-    }
+    
+    public void getAllID() throws SQLException {
+        filteredID = new ArrayList<String>();
+        String s;
+        Connection conn = null;
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:src/database/FlexiData.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            //System.out.println("Connection to SQLite has been established.");
+            
+            String sql = "SELECT PropertyID FROM Property";
+            Statement stmt  = conn.createStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+           
+           // loop through the result set
+           while (rs.next()) {             
+               s = rs.getString("propertyID");
+               if(!filteredID.contains(s))
+                   filteredID.add(s);
+           }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                throw ex;
+            }
+        }
+    
+    
+    
     
     //Search main property list stored with a list of property IDs
     public void searchListWithID() {
-        //boolean found = false;
-        //Iterator<Property>  iter = filteredList.iterator();
        
         filteredList = new ArrayList<Property>();
         for ( Property curItem : properties )
         {
             for(String t : filteredID) {
-                if (curItem.getPropertyID().equals(t)) {
-                    //System.out.println(curItem.getSuburb());
-                    filteredList.add(curItem);
-                    //found = true;
+                
+                if (curItem.getPropertyID().equals(t)) {                  
+                    filteredList.add(curItem);                 
                     break;
                 }
             }
@@ -237,8 +258,8 @@ public class FlexiRentSystem {
     }
     
     // Filter out the property matches specific propertyID
-    public boolean setFilterList(String propertyID) {
-        System.out.println("\n ID input " + propertyID);
+    public boolean setFilterList(String propertyID) throws SQLException {
+       
         Connection conn = null;
         String pID = "";
         filteredID = new ArrayList<String>();
@@ -248,19 +269,20 @@ public class FlexiRentSystem {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
-            //System.out.println("Connection to SQLite has been established.");
-            
             String sql = "SELECT propertyID FROM Property WHERE propertyID = \'" + propertyID + "\'";
-            System.out.println(sql);
+           
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
            
            // loop through the result set
            while (rs.next()) {             
                pID = rs.getString("propertyID");
-               System.out.println("\n ID FROM DATABASE: " + pID);
+           
                filteredID.add(pID);
+               
            }
+           
+          
           //TODO TYPE NOT MATCH EXCEPTION  
           if(pID != null) {          
           searchListWithID();
@@ -277,13 +299,13 @@ public class FlexiRentSystem {
           
            
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
+           throw e;
+           
         }
     }
     
     // Filter out property list according to MainWindow filter conditions
-    public void setFilterList(String propertyType, int bedNum, int status, String suburb) {
+    public void setFilterList(String propertyType, int bedNum, int status, String suburb) throws SQLException {
         
         Connection conn = null;
         String pType = "";
@@ -321,14 +343,14 @@ public class FlexiRentSystem {
         
         if (type.size() == 1 ) {
             all = type.get(0);
-            System.out.println(all);
+           
         }
         else {
             for(int i =0; i<(type.size()-1); i++) {
                 all = all + " " + type.get(i) + " AND ";
             }
             all = all +type.get(type.size()-1);
-            System.out.println(all);
+           
         }
         
         
@@ -339,8 +361,6 @@ public class FlexiRentSystem {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
-            //System.out.println("Connection to SQLite has been established.");
-            
             String sql = "SELECT propertyID FROM Property WHERE " + all;
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
@@ -348,32 +368,28 @@ public class FlexiRentSystem {
            // loop through the result set
            while (rs.next()) {             
                propertyID = rs.getString("propertyID");
-               //System.out.print(propertyID + ":");
                filteredID.add(propertyID);
                
            }
           //TODO TYPE NOT MATCH EXCEPTION  
           for(String k : filteredID) {
-              System.out.println(k);
+             
           }
           
           searchListWithID();
            
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
+     
                 if (conn != null) {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                throw ex;
             }
         }             
-    }
+
     
     // Connect and generate whole list of properties from database
-    public void getMainList() {
+    public void getMainList() throws Exception {
         properties = new ArrayList<Property>();
         Connection conn = null;
         String dateL = "";
@@ -383,9 +399,7 @@ public class FlexiRentSystem {
             // db parameters
             String url = "jdbc:sqlite:src/database/FlexiData.db";
             // create a connection to the database
-            conn = DriverManager.getConnection(url);
-            
-            //System.out.println("Connection to SQLite has been established.");
+            conn = DriverManager.getConnection(url);         
             
             String sql = "SELECT propertyID, streetNo, streetName, " + 
                     "suburb, bedNum, lastMaintainDate, startMaintenance, "
@@ -396,25 +410,25 @@ public class FlexiRentSystem {
            // loop through the result set
            while (rs.next()) {             
                propertyID = rs.getString("propertyID");
-               System.out.print(propertyID + ":");
+               
                streetNo = rs.getInt("streetNo");
-               //System.out.print(streetNo + ":");
+              
                streetName = rs.getString("streetName");
-               //System.out.print(streetName + ":");
+            
                suburb = rs.getString("suburb");
-               //System.out.print(suburb + ":");
+              
                bedNum = rs.getInt("bedNum");
-               //System.out.print(bedNum + ":");
+            
                dateL = rs.getString("lastMaintainDate");
-               //System.out.print(dateL + ":");
+              
                dateS = rs.getString("startMaintenance");
-               //System.out.print(dateS + ":");
+             
                image = rs.getString("image");  
-               //System.out.print(image + ":");
+             
                description = rs.getString("description"); 
-               //System.out.print(description + ":");
+              
                status = rs.getInt("status");
-               //System.out.print(status + "\n");
+              
                
                
                //Parse date format
@@ -449,32 +463,26 @@ public class FlexiRentSystem {
            }
            
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+           throw e;
         } 
             
         
     }
         
-    private LocalDate convertDate(String in) {
+    private LocalDate convertDate(String in) throws Exception {
         
-        if(in.matches(checkDate)) {            
+                 
           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
           LocalDate date = LocalDate.parse(in, formatter);
             return date;
             
-            
-        }
-        else {
-            //TODO DATEFORMATE EXCEPTION
-            System.out.println("Date data corrupted.");
-            return null;
-        }
+          
     }
        
         
     public void importData(String propertyID, int streetNo, String streetName, 
             String suburb, int bedNum, String LastMaintenance,
-            int status, String image, String description){
+            int status, String image, String description) throws SQLException{
             
             LocalDate day = LocalDate.now();
             
@@ -485,22 +493,18 @@ public class FlexiRentSystem {
             
             }
             else {
-                    System.out.println("Til this step1");
+                   
                     day = LocalDate.parse(LastMaintenance, formatter);
                     
-                    System.out.println("Til this step2");
+                   
                     property = new PremiumSuite(propertyID, streetNo, streetName, 
                             suburb, 3, day, 
-                            status, image, description);} 
-      
-            System.out.println("Til this step3" + property.getDescription());
+                            status, image, description);}            
             
             insertNew(propertyID, streetNo, streetName, 
                     suburb, bedNum, day.format(formatter), 
                     status, image, description);
-            
-            
-            System.out.println("Til this step4");
+                     
             properties.add(property);
             
             
@@ -508,10 +512,4 @@ public class FlexiRentSystem {
     
 }          
    
-        
-
-//    private insertRecords(String recordId, String rentDate) {
-//        
-//      //recordId:rentDate:estimatedReturnDate:actualReturnDate:rentalFee:lateFee
-//        
-//    }
+       

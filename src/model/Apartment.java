@@ -59,8 +59,6 @@ public class Apartment extends Property {
                 // create a connection to the database
                 conn = DriverManager.getConnection(url);
                 
-                //System.out.println("Connection to SQLite has been established.");
-                
                 String sql1 = "INSERT INTO RentalRecord (recordID, propertyID, customerID, rentDate, estimatedReturnDate) "
                         + "VALUES(?,?,?,?,?)";
                 Statement stmt1  = conn.createStatement();                     
@@ -87,7 +85,7 @@ public class Apartment extends Property {
                     
             }
                 catch (SQLException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println(e.getMessage() + "TAG E");
                 }
             
             
@@ -122,7 +120,7 @@ public class Apartment extends Property {
     }
     
             
-    public void returnProperty(LocalDate returnDate) {
+    public void returnProperty(LocalDate returnDate) throws Exception {
         
         
         int actualDiff = 1;
@@ -131,33 +129,38 @@ public class Apartment extends Property {
         
         
         //ascending order
+        System.out.println("SSSSS2222: " + super.getRecords().size()); 
         RentalRecord rec = super.getRecords().get(0);
         
-        actualDiff = returnDate.compareTo(rec.getRentDate());
+         
+        actualDiff = returnDate.compareTo(rec.getRentDate());   
+        System.out.println("1:" + actualDiff);
         estimateDiff = rec.getEstimatedReturnDate().compareTo(rec.getRentDate());
+        System.out.println("2:" + estimateDiff);
         lateDiff = returnDate.compareTo(rec.getEstimatedReturnDate());
+        System.out.println("23:" + lateDiff);
        
-            try { 
-            if (actualDiff>0) {
-                
+      
+         if (actualDiff>0) {
+                System.out.println("SSSSS22221: "+ "here");
                 super.setRate();
+                System.out.println("SSSSS22221: "+ "there");
                 
                 if (lateDiff > 0) {
-                        
+                    System.out.println("SSSSS1: " + super.getRentalRate());    
                     rec.setRentalFee(estimateDiff, super.getRentalRate());
                     rec.setLateFee(lateDiff, super.getRentalRate());
-                    //System.out.println("Rental Fee:            " + super.df2.format(rec.getRentalFee())
-                     //         + "\n" + "Late Fee:              " + super.df2.format(rec.getLateFee()));
+         
                 }
                 else {
-                    //rec.setLateFee(0, super.getRentalRate());
-                    rec.setRentalFee(actualDiff, super.getRentalRate());
-                    
+          
+                    rec.setRentalFee(actualDiff, super.getRentalRate());                   
                 }
                 
-                //this method will return TRUE if the property now can be rented successfully.
                 rec.setActualReturnDate(returnDate);
+                System.out.println("SSSSS2: " + rec.getActualReturnDate());                          
                 
+             try {   
                 Connection conn = null;
               
                     // db parameters
@@ -165,7 +168,7 @@ public class Apartment extends Property {
                     // create a connection to the database
                     conn = DriverManager.getConnection(url);
                     
-                    //System.out.println("Connection to SQLite has been established.");
+              
                     
                     String sql1 = "UPDATE RentalRecord SET actualReturnDate = ? , "
                                 + "rentalFee = ? , "
@@ -179,47 +182,38 @@ public class Apartment extends Property {
                         pstmt1.setString(4, rec.getRecordID());    
                         pstmt1.executeUpdate();
                         
-                        
-                    String sql2 = "UPDATE Property SET status = ? "
+                       String id = super.getPropertyID(); 
+                       String sql2 = "UPDATE Property SET status = ? "
                                 + "WHERE propertyID = ?";
-                    Statement stmt2  = conn.createStatement();                     
-                    PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+                       Statement stmt2  = conn.createStatement();                     
+                       PreparedStatement pstmt2 = conn.prepareStatement(sql2);
                         pstmt2.setInt(1, 2);
-                        pstmt2.setString(2, super.getPropertyID());                
+                        pstmt2.setString(2, id);                
                         pstmt2.executeUpdate();    
                         
                         conn.close(); 
-                super.setToReturn();
-                
-               
-            }
-            else {
-                
-               
-            
-                throw new Exception();
-            }
-            }
+                        //super.setToReturn();
+            }       
             catch(Exception e) {    
-                System.out.println("Apartment " + super.getPropertyID() + " could not be returned.");
+               throw e;
+            } 
             }
-  
-         
+         else { 
+             throw new Exception();
+          }
         }
            
    
 
  
     
-    public void performMaintenance() {
+    public void performMaintenance() throws SQLException {
         // ASSUME1: apartment maintenance is ONLY called on the current day.
         // ASSUME2: apartment rented even in future days will NOT allow maintenance.
-        LocalDate today = LocalDate.now();
-        
-            super.setStartMaintain(today);
-            super.resetLastMaintainDate(today);
+        LocalDate today = LocalDate.now();            
+        super.setStartMaintain(today);
+        super.resetLastMaintainDate(today);
             
-            System.out.println("Property " + super.getPropertyID() + " is under maintainance from today.");
             Connection conn = null;
             try {
             // db parameters
@@ -227,27 +221,27 @@ public class Apartment extends Property {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
-            //System.out.println("Connection to SQLite has been established.");
-            
-            String sql1 = "UPDATE Property SET lastMaitaindDate = ? , "
-                        + "startMaintenance = ? "
+            String sql1 = "UPDATE Property SET lastMaintainDate = ? , "
+                        + "startMaintenance = ? ,"
+                        + "status = ? "
                       
                         + "WHERE propertyID = ?";
+           
             Statement stmt1  = conn.createStatement();                     
             PreparedStatement pstmt1 = conn.prepareStatement(sql1);
                 pstmt1.setString(1, super.getLastMaintainDate().format(getDateFormat()));
                 pstmt1.setString(2, super.getStartMaintainDate().format(getDateFormat()));
-                pstmt1.setString(3, super.getPropertyID());
+                pstmt1.setInt(3, 3);
+                pstmt1.setString(4, super.getPropertyID());
               
                 pstmt1.executeUpdate();
              
                 
                 conn.close();
                 
-                
             }
             catch(SQLException sql) {
-                System.out.println("Maintenance EROR");
+               throw sql;
             }
         
         
@@ -267,7 +261,7 @@ public class Apartment extends Property {
         if (diff >= 0) {
             
             super.setLastMaintainDate(completionDate);
-            System.out.println(super.getPropertyID() + " has all maintenance completed and ready for rent." );
+            
             
             Connection conn = null;
             
@@ -275,19 +269,21 @@ public class Apartment extends Property {
             String url = "jdbc:sqlite:src/database/FlexiData.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
+
+            String sql1 = "UPDATE Property SET lastMaintainDate = ? , "
+                    + "status = ? "                  
+                    + "WHERE propertyID = ?";
             
-            //System.out.println("Connection to SQLite has been established.");
             
-            String sql1 = "UPDATE Property SET lastMaitaindDate = ? "                     
-                        + "WHERE propertyID = ?";
             Statement stmt1  = conn.createStatement();                     
             PreparedStatement pstmt1 = conn.prepareStatement(sql1);
                 pstmt1.setString(1, super.getLastMaintainDate().format(getDateFormat()));
-                pstmt1.setString(2, super.getPropertyID());             
+                pstmt1.setInt(2, 2);
+                pstmt1.setString(3, super.getPropertyID());             
                 pstmt1.executeUpdate();            
 
                 conn.close();
-        
+                System.out.println(super.getPropertyID() + " has all maintenance completed and ready for rent." );
             
         }
         else {
@@ -296,7 +292,7 @@ public class Apartment extends Property {
         }
         }
         catch(Exception e4) {
-            System.out.println("Invalid. Cannot complete maintenance for the property." );
+            System.out.println(e4.getMessage() + "TAG E4");
         }
         
         
@@ -321,58 +317,10 @@ public class Apartment extends Property {
     }
     
     public String getDetails() {
+        return null;
        
-        String s2 = "";
-        final String s3 = "RENTAL RECORD" + "\n";
-        String s4 = "";
-     
         
-        String s1 = "Property ID:    " + super.getPropertyID() + "\n" +
-                    "Address:        " + super.getStreetNo() + " " + super.getStreetName() + " " + super.getSuburb() + "\n" +
-                    "Type:           " + "Apartment" + "\n" +
-                    "Bedroom:        "  + super.getBedNum() + "\n" +
-                    "Status:      " + super.convertStatus(super.getStatus()) + "\n";
-        
-        if (super.getRecords().get(0) == null) {
-            s2 = "RENTAL RECORD:  empty" + "\n" +
-                 "----------------------------------";
-            return s1 + s2;
-        }
-        else if(super.getRecords().get(0).getActualReturnDate() == null) {
-         
-            s4 = "Record ID:             " + super.getRecords().get(0).getRecordID() + "\n" +
-                 "Rent Date:             " + super.getRecords().get(0).getRentDate().format(getDateFormat()) + "\n" +
-                 "Estimated Return Date: " + super.getRecords().get(0).getEstimatedReturnDate().format(getDateFormat()) + "\n" +
-                    "----------------------------------";
-            for (int i= 1; i<super.getRecords().size(); i++ ) {
-                if(super.getRecords().get(i)== null) break;
-                s4 = s4 +  "\n" +
-                     "Record ID:             " + super.getRecords().get(i).getRecordID() + "\n" +
-                     "Rent Date:             " + super.getRecords().get(i).getRentDate().format(getDateFormat()) + "\n" +
-                     "Estimated Return Date: " + super.getRecords().get(i).getEstimatedReturnDate() + "\n" +
-                     "Actual Return Date:    " + super.getRecords().get(i).getActualReturnDate() + "\n" +
-                     "Rental Fee:            " + super.getRecords().get(i).getRentalFee() + "\n" +
-                     "Late Fee:              " + super.getRecords().get(i).getLateFee() + "\n" +
-                     "----------------------------------";
-                     
-           }
-            return s1 + s3 + s4;
-       }
-        
-       else {
-            for (int i= 0; i<super.getRecords().size(); i++ ) {
-                if(super.getRecords().get(i)== null) break;
-                s4 = s4 +  "\n" +
-                     "Record ID:             " + super.getRecords().get(i).getRecordID() + "\n" +
-                     "Rent Date:             " + super.getRecords().get(i).getRentDate().format(getDateFormat()) + "\n" +
-                     "Estimated Return Date: " + super.getRecords().get(i).getEstimatedReturnDate() + "\n" +
-                     "Actual Return Date:    " + super.getRecords().get(i).getActualReturnDate() + "\n" +
-                     "Rental Fee:            " + super.getRecords().get(i).getRentalFee() + "\n" +
-                     "Late Fee:              " + super.getRecords().get(i).getLateFee() +
-                     "----------------------------------";;
-            }
-            return s1 + s3 + s4;
-       }
+      
 
        
    

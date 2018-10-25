@@ -109,11 +109,11 @@ public abstract class Property {
     
     public abstract String getType();
     
-    public abstract void rent(String customerId, LocalDate rentDate, int numOfRentDay);
+    public abstract void rent(String customerId, LocalDate rentDate, int numOfRentDay) throws Exception;
     
-    public abstract void returnProperty(LocalDate returnDate);  
+    public abstract void returnProperty(LocalDate returnDate) throws Exception;  
     
-    public abstract void performMaintenance();       
+    public abstract void performMaintenance() throws SQLException;       
     
     public abstract void completeMaintenance(LocalDate completionDate);
    
@@ -142,14 +142,12 @@ public abstract class Property {
     //the 10 most recent times that property has been rented
    
     public void addRecord(RentalRecord record) {
-        records.add(0, record); 
-        System.out.print(records.get(0).getRecordID());
-        
-        
+        records.add(0, record);
+   
     }
     
     
-    public void getAllRecords() {
+    public void getAllRecords() throws SQLException {
         
         records = new ArrayList<RentalRecord>();
         Connection conn = null;
@@ -171,14 +169,12 @@ public abstract class Property {
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
-            //System.out.println("Connection to SQLite has been established.");
-            
             String sql = "SELECT recordID, customerID, "
                     + "rentDate, estimatedReturnDate, actualReturnDate, "
                     + "rentalFee, lateFee FROM RentalRecord WHERE propertyID = \'" + propertyID
-                    + "\' ORDER BY rentDate DESC";
+                    + "\' ORDER BY date(rentDate) DESC";
             
-            System.out.println(sql);
+       
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
            
@@ -191,10 +187,6 @@ public abstract class Property {
                actualDate = rs.getString("actualReturnDate");
                fee = rs.getDouble("rentalFee");
                lateFee = rs.getDouble("lateFee");               
-               
-           
-           
-           
            
            if(rID!=null&& rentDate !=null) {
           //TODO TYPE NOT MATCH EXCEPTION  
@@ -205,30 +197,29 @@ public abstract class Property {
                record = new RentalRecord(rID, cID, rDate , eDate);
                
                if(actualDate != null) {
-                   System.out.println("Check date string emptiness");
+                  
                    
                    LocalDate aDate = LocalDate.parse(actualDate, getDateFormat());
                    record.setActualReturnDate(aDate);
                    record.setRentalFee(fee);
                    record.setLateFee(lateFee);          
                }
-               System.out.println("rID " + rID + " is added.");
+              
                records.add(record);
-               System.out.println(record.getRecordID());
-               
+            
            }
            }
           
            conn.close();
   
             } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+               throw ex;
             }
         }             
    
     
         public void insertNewRecord(String propertyID, String recordID, String customerID, String rentDate, 
-                String estimatedReturnDate, String actualReturn, String rentalFee, String lateFee) {
+                String estimatedReturnDate, String actualReturn, String rentalFee, String lateFee) throws SQLException {
             records = new ArrayList<RentalRecord>();
             Connection conn = null;
             
@@ -238,12 +229,10 @@ public abstract class Property {
                 // create a connection to the database
                 conn = DriverManager.getConnection(url);
                 
-                //System.out.println("Connection to SQLite has been established.");
-                
                 String sql = "INSERT INTO RentalRecord (recordID, propertyID, customerID, rentDate, estimatedReturnDate) "
                         + "VALUES(?,?,?,?,?)";
                 
-                System.out.println(sql);
+            
                 Statement stmt  = conn.createStatement();                     
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                     pstmt.setString(1, recordID);
@@ -277,24 +266,13 @@ public abstract class Property {
                    record.setRentalFee(Double.parseDouble(rentalFee));
                    record.setLateFee(Double.parseDouble(lateFee));
                }
-               
-               
+             
                conn.close();
-               
-               
+              
                }
-              
-               
-      
-               catch (SQLException ex) {
-                   // System.out.println(ex.getMessage());
-                }
-                
-              
-            
-            
+               catch (SQLException ex) {  
+                   throw ex;
+                }                  
         }
-         
-   
-    
+
 }
